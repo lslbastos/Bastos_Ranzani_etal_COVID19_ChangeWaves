@@ -37,3 +37,8 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+# Large-sized Folders
+backup/*
+data/*
+shiny_app_sivep/*
