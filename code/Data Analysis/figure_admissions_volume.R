@@ -19,47 +19,27 @@ library(patchwork)
 
 #### importing previous cleanned database
 srag_adults_covid <-
-    data.table::fread("input/srag_adults_covid_2021-04-12_hosp.csv.gz", 
+    data.table::fread("data/srag_adults_covid_2021-05-17_hosp.csv.gz",
                       na.strings = c("", "NA")) %>%
-    as_tibble()
+    as_tibble() 
+    # %>%
+    # filter(SG_UF_INTE == "PA")
     
 
 
-### Reference dates from E484 mutation (outbreak.info)
-# S:E484K mutation description: the date/week with the first sharp increase of prevalence 
-#                   (around October 09 or 10, 2020 - Epi. Week 43/2020)
-# S:E484K mutation dominance: the date/week with prevalence over 50% of samples
-#                 (around December 28 or 29, 2020 - Epi. Week 53/2020)
-
-df_date_ref <- 
-    tibble(
-        week_bp    = c(43, 53),
-        week_label = c("E484 Description", "E484 Domain")
-    )
-
-df_plot_label_ref <- 
-    tibble(
-        x = c(13, 47, 57),
-        y = c(40000, 40000, 38000),
-        label = c("1st wave", "2nd wave", "Dominance\nE484K mutation"),
-        fontface = c("bold", "bold", "plain")
-        # size = c(3, 3, 2)
-    )
-
-
-
-delay <- 4
 
 # Volume per Epidemiological Weeks ----------------------------------------
 
-## Volume: All Admissions, Hipoxemia, Age, NIV and IMV among 
+## Volume: All Admissions, Hipoxaemia, Age, NIV and IMV among 
 df_covid_data_week_all <-
-    srag_adults_covid %>% 
     bind_rows(
+        srag_adults_covid, 
         srag_adults_covid %>% 
-            mutate(REGIAO = "Brazil")
+            mutate(REGIAO = "Brazil"),
+        srag_adults_covid %>% 
+            mutate(REGIAO = SG_UF_INTE)
     ) %>% 
-    group_by(REGIAO, week = SEM_PRI_CONT, ano_pri_week) %>%
+    group_by(REGIAO, week = SEM_PRI_CONT, ano_pri_week, week_start) %>%
     summarise(
         notif  = n(),
         sat_missing_no = sum(is.na(SATURACAO_m) | SATURACAO_m == "No", na.rm = TRUE),
@@ -70,23 +50,73 @@ df_covid_data_week_all <-
     replace_na(list(notif = 0, sat = 0)) %>%
     ungroup() %>% 
     left_join(
-        srag_adults_covid %>% 
-            group_by(week = SEM_OBI_CONT, ano_obi_week) %>%
-            summarise(
-                deaths  = sum(EVOLUCAO == "Death"),
-            ),
-        by = c("week" = "week",
+        bind_rows(
+            srag_adults_covid %>% 
+                group_by(REGIAO, week = SEM_OBI_CONT, ano_obi_week) %>%
+                summarise(
+                    deaths  = sum(EVOLUCAO == "Death")
+                ),
+            srag_adults_covid %>% 
+                mutate(REGIAO = "Brazil") %>% 
+                group_by(REGIAO, week = SEM_OBI_CONT, ano_obi_week) %>%
+                summarise(
+                    deaths  = sum(EVOLUCAO == "Death")
+                ),
+            srag_adults_covid %>% 
+                mutate(REGIAO = SG_UF_INTE) %>% 
+                group_by(REGIAO, week = SEM_OBI_CONT, ano_obi_week) %>%
+                summarise(
+                    deaths  = sum(EVOLUCAO == "Death")
+                )
+        ),
+        by = c("REGIAO" = "REGIAO",
+               "week" = "week",
                "ano_pri_week" = "ano_obi_week")
     ) %>% 
     replace_na(list(notif = 0, sat = 0, deaths = 0))
 
 
 
+### Reference dates from E484 mutation (outbreak.info)
+# S:E484K mutation description: the date/week with the first sharp increase of prevalence 
+#                   (around October 09 or 10, 2020 - Epi. Week 43/2020)
+# S:E484K mutation dominance: the date/week with prevalence over 50% of samples
+#                 (around December 28 or 29, 2020 - Epi. Week 53/2020)
+
+max_vol_labels <- max(df_covid_data_week_all$notif) - 500
+
+df_date_ref <- 
+    tibble(
+        week_bp    = c(43, 53),
+        week_label = c("E484 Description", "E484 Domain")
+    )
+
+df_plot_label_ref <- 
+    tibble(
+        x = c(13, 47, 54, max(df_covid_data_week_all$week) - delay + 1),
+        y = c(max_vol_labels, max_vol_labels, max_vol_labels - 10000, max_vol_labels - 10000),
+        label = c("1st wave", "2nd wave", "Dominance of\nE484K mutation", "Notification delay"),
+        fontface = c("bold", "bold", "plain", "plain"),
+        angle = c(0, 0, 90, 90)
+        # size = c(3, 3, 2)
+    )
+
+
+# Number of weeks for delay
+delay <- 4
+
+
 
 ## Plot settings for 'x' axis - Epidemiological weeks
-week_range <- c(seq(13, 46, 13), 53, max(df_covid_data_week_all$week))
-epi_weeks_label <- unique(df_covid_data_week_all$ano_pri_week[df_covid_data_week_all$week %in% week_range])
+# week_range <- c(seq(13, 46, 13), 53, max(df_covid_data_week_all$week))
+# epi_weeks_label <- unique(df_covid_data_week_all$ano_pri_week[df_covid_data_week_all$week %in% week_range])
 
+
+df_epi_weeks_label <-
+    df_covid_data_week_all %>% 
+    distinct(week, ano_pri_week, week_start) %>% 
+    filter(week %in% c(seq(13, 13*5, 13))) %>% 
+    arrange(week)
 
 
 
@@ -108,11 +138,12 @@ plot_covid_week_notif_sat <-
             ymin = 0, ymax = Inf), fill = "lightyellow"
     ) + 
     geom_area(aes(x = week, y = val, fill = sat), position = "stack") +
-    scale_y_continuous(labels = scales::comma_format(),
-                       limits = c(0, 45000),
-                       breaks = seq(0, 45000, 5000)) +
-    scale_x_continuous(breaks = week_range,
-                       labels = epi_weeks_label
+    scale_y_continuous(labels = scales::comma_format()
+                       # limits = c(0, 45000),
+                       # breaks = seq(0, 45000, 5000)
+                       ) +
+    scale_x_continuous(breaks = df_epi_weeks_label$week,
+                       labels = format(df_epi_weeks_label$week_start, format = "%d/%b/%y")
     ) + 
     scale_fill_manual(name = "Hospital Admissions",
                       values = rev(c("#0099B47F", "#0099B4FF"))
@@ -121,8 +152,9 @@ plot_covid_week_notif_sat <-
     geom_rect(aes(xmin = max(week) - delay, xmax = max(week), 
                   ymin = min(val), ymax = Inf), 
               fill = "gray80", alpha = 0.02) +
-    geom_text(data = df_plot_label_ref, 
-              aes(x = x, y = y, label = label, fontface = fontface), size = 3.5) +
+    geom_text(data = df_plot_label_ref,
+              aes(x = x, y = y, label = label, fontface = fontface, 
+                  angle = angle), size = 3.5) +
     labs(
         x = "Epidemiological Weeks",
         y = "Number of admissions",
@@ -159,11 +191,12 @@ plot_covid_week_resp_supp <-
     scale_fill_manual(name = "Respiratory Support",
                       values = rev(c("#AD002A99", "#AD002AFF"))
                       ) +
-    scale_y_continuous(labels = scales::comma_format(), 
-                       limits = c(0, 35000),
-                       breaks = seq(0, 35000, 5000)) +
-    scale_x_continuous(breaks = week_range,
-                       labels = epi_weeks_label
+    scale_y_continuous(labels = scales::comma_format()
+                       # limits = c(0, 35000),
+                       # breaks = seq(0, 35000, 5000)
+                       ) +
+    scale_x_continuous(breaks = df_epi_weeks_label$week,
+                       labels = format(df_epi_weeks_label$week_start, format = "%d/%b/%y")
                        ) + 
     labs(
         x = "Epidemiological Weeks",
@@ -185,12 +218,12 @@ plot_covid_week_death <-
     filter(REGIAO == "Brazil") %>% 
     ggplot() +
     geom_area(aes(x = week, y = deaths, fill = "Deaths")) +
-    scale_y_continuous(labels = scales::comma_format(),
-                       limits = c(0, 16000),
-                       breaks = seq(0, 16000, 2000),
+    scale_y_continuous(labels = scales::comma_format()
+                       # limits = c(0, 16000),
+                       # breaks = seq(0, 16000, 2000),
                        ) +
-    scale_x_continuous(breaks = week_range,
-                       labels = epi_weeks_label
+    scale_x_continuous(breaks = df_epi_weeks_label$week,
+                       labels = format(df_epi_weeks_label$week_start, format = "%d/%b/%y")
                        ) + 
     scale_fill_manual(name = "In-hospital deaths",
                       labels = c(""),
@@ -235,12 +268,14 @@ plot_covid_week_death <-
 
 # Volume per Age
 df_covid_data_week_age <-  
-    srag_adults_covid %>% 
     bind_rows(
+        srag_adults_covid, 
         srag_adults_covid %>% 
-            mutate(REGIAO = "Brazil")
+            mutate(REGIAO = "Brazil"),
+        srag_adults_covid %>% 
+            mutate(REGIAO = SG_UF_INTE)
     ) %>% 
-    group_by(REGIAO, FAIXA_IDADE_SIMP, week = SEM_PRI_CONT, ano_pri_week) %>%
+    group_by(REGIAO, FAIXA_IDADE_SIMP, week = SEM_PRI_CONT, ano_pri_week, week_start) %>%
     summarise(
         notif = n(),
     ) %>% 
@@ -266,11 +301,11 @@ plot_covid_week_age <-
                   ymin = 0, ymax = Inf), 
               fill = "gray80", alpha = 0.02) +
     scale_y_continuous(labels = scales::comma_format(), 
-                       limits = c(0, 45000),
-                       breaks = seq(0, 45000, 5000)
+                       # limits = c(0, 45000),
+                       # breaks = seq(0, 45000, 5000)
                        ) +
-    scale_x_continuous(breaks = week_range,
-                       labels = epi_weeks_label
+    scale_x_continuous(breaks = df_epi_weeks_label$week,
+                       labels = format(df_epi_weeks_label$week_start, format = "%d/%b/%y")
                        ) + 
     scale_fill_manual(name = "Age",
                       values = c("#42B540FF", "#42B5407F")
@@ -297,8 +332,8 @@ plot_comb_week_all <-
               plot_covid_week_death) ) 
 
 
-ggsave("output/fig1_hosp_week_2021-04-12.pdf",
-       plot = plot_comb_week_all, width = 12, height = 8,
+ggsave("output/fig1_hosp_week_2021-05-17.pdf",
+       plot = plot_comb_week_all, width = 13, height = 9,
        unit = "in", dpi = 800)
 
 
@@ -311,6 +346,11 @@ ggsave("output/fig1_hosp_week_2021-04-12.pdf",
 
 # Exporting data for shiny app --------------------------------------------
 
-write_csv(df_covid_data_week_all, "shiny_app_sivep/app_data/df_covid_data_week_all.csv.gz")
+# write_csv(df_covid_data_week_all, "shiny_app_sivep/app_data/df_covid_data_week_all.csv.gz")
+# 
+# write_csv(df_covid_data_week_age, "shiny_app_sivep/app_data/df_covid_data_week_age.csv.gz")
 
-write_csv(df_covid_data_week_age, "shiny_app_sivep/app_data/df_covid_data_week_age.csv.gz")
+
+saveRDS(df_covid_data_week_all, "shiny_app_sivep/app_data/df_covid_data_week_all.rds")
+
+saveRDS(df_covid_data_week_age, "shiny_app_sivep/app_data/df_covid_data_week_age.rds")

@@ -21,11 +21,11 @@ library(tidylog)
 ##   in March 31, 2021
 
 # Input Data
-df_SE484K <- read_tsv("input/SE484K_outbreakinfo_mutation_report_data_2021-04-14.tsv")
+df_SE484K <- read_tsv("input/SE484K_outbreakinfo_mutation_report_data_2021-05-19.tsv")
 
-df_P1 <- read_tsv("input/P1_outbreakinfo_mutation_report_data_2021-04-14.tsv")
+df_P1 <- read_tsv("input/P1_outbreakinfo_mutation_report_data_2021-05-19.tsv")
 
-df_B117 <- read_tsv("input/B117_outbreakinfo_mutation_report_data_2021-04-14.tsv")
+df_B117 <- read_tsv("input/B117_outbreakinfo_mutation_report_data_2021-05-19.tsv")
 
 
 
@@ -46,9 +46,9 @@ df_variants <-
 # Plots: Average daily prevalence of variants/mutation in Time -----------------------------------
 df_plot_label_ref <- 
     tibble(
-        x = c("2021-01-26"),
+        x = c("2021-01-28"),
         y = c( 1),
-        label = c("Dominance\nE484K mutation"),
+        label = c("Dominance of\nE484K mutation"),
         fontface = c("plain")
         # size = c(3, 3, 2)
     )
@@ -70,7 +70,7 @@ plot_daily_prev <-
     geom_text(data = df_plot_label_ref, 
               aes(x = as.Date(x), y = y, label = label, fontface = fontface), size = 2) +
     scale_color_discrete(name = "Lineage/Mutation") +
-    geom_rect(aes(xmin = max(date) - 3, xmax = max(date), 
+    geom_rect(aes(xmin = max(date) - 7, xmax = max(date), 
                   ymin = min(0), ymax = Inf), 
               fill = "gray80", alpha = 0.02) +
     labs(
@@ -79,12 +79,12 @@ plot_daily_prev <-
         title = "Average daily prevalence",
         subtitle = paste0("Source: GISAID - SARS-CoV-2 (hCoV-19) Mutation Reports (outbreak.info/situation-reports)\n",
                           "Last update: ", date_last_update, " | ",
-                          "Data export: April 14, 2021")
+                          "Data export: May 19, 2021")
     ) +
     theme_classic()
 
 
-ggsave(paste0("output/plot_daily_prev_variants_2021-04-14.png"),
+ggsave(paste0("output/plot_daily_prev_variants_2021-05-19.png"),
        plot = plot_daily_prev, width = 7, height = 4,
        unit = "in", dpi = 800)
 

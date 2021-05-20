@@ -23,7 +23,7 @@ library(tidyverse)
 
 # Downloading from URL
 source("code/Auxiliary Functions/download_sivep.R")
-srag <- download_sivep(date = "2021-04-12", return_df = TRUE)
+srag <- download_sivep(date = "2021-05-17", return_df = TRUE)
 
 # Reading from disk file
 # srag <- vroom::vroom("data/sivep_raw_2021-04-05.csv.gz",
@@ -36,7 +36,7 @@ srag <- download_sivep(date = "2021-04-12", return_df = TRUE)
 #                          ),
 #                      )
 
-name_file_output <- "srag_adults_covid_2021-04-12_hosp"
+name_file_output <- "srag_adults_covid_2021-05-17_hosp"
 
 ## Filter: Admissions after Feb 16 (Epidemiological Week 8 - COVID in Brazil)
 srag <- 
@@ -96,7 +96,7 @@ srag_covid <-
 # Filter: Age > 20 years (adult hospitalizations)
 ## Correcting for extreme age values with wrong date of birth
 srag_adults_covid <- srag_covid %>%
-    mutate(NU_IDADE_N = ifelse(NU_IDADE_N > 120, (100 - NU_IDADE_N), NU_IDADE_N)) %>% #2 typos (probably wrong DT_NASC)
+    mutate(NU_IDADE_N = ifelse(TP_IDADE == 3 & NU_IDADE_N > 120, (100 - NU_IDADE_N), NU_IDADE_N)) %>% #2 typos (probably wrong DT_NASC)
     filter(NU_IDADE_N >= 20 & TP_IDADE == 3)
 
 
@@ -323,7 +323,7 @@ srag_adults_covid_final <-
            OBESIDADE_m, OUT_MORBI_m, MORB_DESC,
            HOSPITAL, date_int, CO_MU_INTE, UTI, SUPORT_VEN, RES_AN, RES_IGG, RES_IGM, RES_IGA, AN_SARS2,
            PCR_RESUL, PCR_SARS2, DS_PCR_OUT, CRITERIO, PCR, CLASSI_FIN, EVOLUCAO, date_desf, date_enc, 
-           n_comorb_m, n_comorb_mreal, CONT_COMORB_m, CONT_COMORB_mreal, CO_UNI_NOT
+           n_comorb_m, n_comorb_mreal, CONT_COMORB_m, CONT_COMORB_mreal, CO_UNI_NOT, CS_ZONA
            ) %>% 
     mutate(
         ano_pri = lubridate::year(date_sint),
@@ -378,7 +378,20 @@ srag_adults_covid_final <-
             ano_obi == 2021 ~ paste0(SEM_OBI, "/", ano_obi)
         )
     ) %>% 
+    group_by(SEM_PRI_CONT) %>% 
+    mutate(
+        week_start = min(date_sint),
+        week_end = max(date_sint)
+    ) %>% 
+    mutate(
+        CS_ZONA = case_when(
+            CS_ZONA == 1 ~ "Urban",
+            CS_ZONA == 2 ~ "Rural",
+            CS_ZONA == 3 ~ "Peri-urban"
+         )
+    ) %>% 
     ungroup()
+
 
 
 
@@ -389,7 +402,7 @@ rm(srag_adults_covid) # Removes SIVEP with all columns
 
 data.table::fwrite(srag_adults_covid_final, paste0("data/", name_file_output,".csv.gz"))
 
-
+saveRDS(srag_adults_covid_final, paste0("data/", name_file_output,".rds"))
 
 
 # finished

@@ -20,7 +20,7 @@ library(patchwork)
 
 #### importing previous cleanned database
 srag_adults_covid <-
-    data.table::fread("input/srag_adults_covid_2021-04-12_hosp.csv.gz", 
+    data.table::fread("data/srag_adults_covid_2021-05-17_hosp.csv.gz", 
                       na.strings = c("", "NA")) %>% 
     as_tibble()
 
@@ -279,7 +279,7 @@ plot_overlap_comb <-
 
 
 
-ggsave("output/2021-04-12_plot_overlap_comb_ribbon.png",
+ggsave("output/2021-05-17_plot_overlap_comb_ribbon.png",
        plot = plot_overlap_comb, width = 6, height = 9,
        unit = "in", dpi = 800)
 

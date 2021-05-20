@@ -21,7 +21,7 @@ delay <- 4
 
 #### importing previous cleanned database
 srag_adults_covid <-
-    data.table::fread("input/srag_adults_covid_2021-04-12_hosp.csv.gz", 
+    data.table::fread("data/srag_adults_covid_2021-05-17_hosp.csv.gz", 
                       na.strings = c("", "NA")) %>% 
     as_tibble() %>% 
     filter(
@@ -43,11 +43,11 @@ srag_adults_covid <-
 # E484 dominance: the date/week with prevalence over 50% of samples
 #                 (around December 28 or 29, 2020 - Epi. Week 53/2020)
 
-df_date_ref <- 
-    tibble(
-        week_bp    = c(43, 53),
-        week_label = c("E484 Description", "E484 Domain")
-    )
+# df_date_ref <- 
+#     tibble(
+#         week_bp    = c(43, 53),
+#         week_label = c("E484 Description", "E484 Domain")
+#     )
 
 
 
@@ -56,13 +56,20 @@ df_date_ref <-
 # Variable labels
 ls_labels_all <- 
     list(
-        total ~ "Admissions, n (%)",
-        total_outcome ~ "Admissions with an outcome, n (%)",
+        total ~ "Admissions, n(%)",
+        total_outcome ~ "Admissions with an outcome, n(%)",
+        CS_SEXO ~ "Sex, n (%)",
+        
         NU_IDADE_N ~ "Age, median (IQR)",
-        age_20_39 ~ "Age 20-39",
-        age_40_59 ~ "Age 40-59",
+        age_20_39 ~ "20-39 years, n(%)",
+        age_40_59 ~ "40-59 years",
         # age_less60 ~ "<60 years, n (%)",
-        age_high60 ~ ">=60 years, n(%)",
+        age_high60 ~ ">=60 years",
+        
+        CS_RACA ~ "Self-reported race, n(%)",
+        
+        CS_ESCOL_N ~ "Self-reported level of education, n (%)",
+        CS_ZONA ~ "Area of residence, n(%)",
         
         SATURACAO_m ~ "Hypoxaemia, n (%)",
         # age_20_39_sat ~ "Age 20-39 with hipoxaemia",
@@ -77,19 +84,19 @@ ls_labels_all <-
         # prop_icu_high60 ~ "Age >= 60 admitted to the ICU",
         # SUPORT_VEN ~ "Respiratory Support, n (%)",
         
-        prop_niv_imv ~ "Total Respiratory Support, n (%)",
-        prop_niv ~ "Non-invasive, n (%)",
-        prop_imv ~ "Invasive, n (%)",
-        prop_imv_in ~ "Invasive mechanical ventilation inside ICU, n (%)",
-        prop_imv_out ~ "Invasive mechanical ventilation outside ICU, n (%)",
+        prop_niv_imv ~ "Total Respiratory Support, n(%)",
+        prop_niv ~ "NIV, n (%)",
+        prop_imv ~ "IMV, n (%)",
+        prop_imv_in ~ "IMV inside ICU, n(%)",
+        prop_imv_out ~ "IMV outside ICU, n(%)",
         
-        ihm_outcome ~ "Deaths, n (%)",
-        age_20_39_outcome ~ "Deaths - 20-39, n (%)",
-        age_40_59_outcome ~ "Deaths - 40-59, n (%)",
-        age_high60_outcome ~ "Deaths - >= 60, n (%)",
-        icu_outcome ~ "Deaths - ICU admission, n (%)",
-        niv_outcome ~ "Deaths - Non-invasive, n (%)",
-        imv_outcome ~ "Deaths - Invasive, n (%)"
+        ihm_outcome ~ "Overall, n (%)",
+        age_20_39_outcome ~ "20-39 years",
+        age_40_59_outcome ~ "40-59 years",
+        age_high60_outcome ~ ">= 60 years",
+        icu_outcome ~ "ICU admission, n (%)",
+        niv_outcome ~ "NIV, n (%)",
+        imv_outcome ~ "IMV, n (%)"
     )
 
 
@@ -220,12 +227,15 @@ tb_covid_all <-
     select(
         period, 
         total,
-        total_outcome,
+        CS_SEXO,
         NU_IDADE_N,
         age_20_39,
         age_40_59,
         # age_less60,
         age_high60,
+        CS_RACA,
+        CS_ESCOL_N,
+        CS_ZONA,
         SATURACAO_m,
         # age_20_39_sat,
         # age_40_59_sat,
@@ -241,11 +251,12 @@ tb_covid_all <-
         prop_imv,
         prop_imv_in,
         prop_imv_out,
+        total_outcome,
+        ihm_outcome,
         age_20_39_outcome,
         age_40_59_outcome,
         age_high60_outcome,
         # age_less_60_outcome,
-        ihm_outcome,
         icu_outcome,
         niv_outcome,
         imv_outcome
@@ -267,7 +278,7 @@ tb_covid_all <-
 tb_overall_desc <- 
     tb_covid_all$table_body %>% 
     filter(!(row_type == "missing")) %>% 
-    select(-c(var_type, var_class)) %>% 
+    select(-c(var_type)) %>% 
     mutate(label = ifelse(row_type == "label", paste0(label, " [n = ", n, "]"), label)) %>% 
     rename("Characteristics" = "label",
            # "Overall" = "stat_0",
@@ -295,12 +306,15 @@ tb_covid_per2 <-
     select(
         period, 
         total,
-        total_outcome,
+        CS_SEXO,
         NU_IDADE_N,
         age_20_39,
         age_40_59,
         # age_less60,
         age_high60,
+        CS_RACA,
+        CS_ESCOL_N,
+        CS_ZONA,
         SATURACAO_m,
         # age_20_39_sat,
         # age_40_59_sat,
@@ -316,11 +330,12 @@ tb_covid_per2 <-
         prop_imv,
         prop_imv_in,
         prop_imv_out,
+        total_outcome,
+        ihm_outcome,
         age_20_39_outcome,
         age_40_59_outcome,
         age_high60_outcome,
         # age_less_60_outcome,
-        ihm_outcome,
         icu_outcome,
         niv_outcome,
         imv_outcome
@@ -341,7 +356,7 @@ tb_covid_per2 <-
 tb_overall_desc_per2 <- 
     tb_covid_per2$table_body %>% 
     filter(!(row_type == "missing")) %>% 
-    select(-c(var_type, var_class)) %>% 
+    select(-c(var_type)) %>% 
     mutate(label = ifelse(row_type == "label", paste0(label, " [n = ", n, "]"), label)) %>% 
     rename("Characteristics" = "label",
            # "Period1" = "stat_1",
@@ -458,97 +473,131 @@ df_admissions_week_dominance <-
 #                  "prop_imv", "prop_imv_in", "prop_imv_out", "ihm_outcome", "icu_outcome",
 #                  "niv_outcome", "imv_outcome")
 
-v_variables <- c("total_outcome", "age_20_39","age_40_59", "age_high60",
-                 "SATURACAO_m", "UTI", "prop_niv_imv", "prop_niv", "prop_imv", 
-                 "prop_imv_in", "prop_imv_out", "ihm_outcome", "icu_outcome", 
-                 "age_20_39_outcome", "age_40_59_outcome",
-                 "niv_outcome","imv_outcome" )
+# v_variables <- c("total_outcome", "age_20_39","age_40_59", "age_high60",
+#                  "SATURACAO_m", "UTI", "prop_niv_imv", "prop_niv", "prop_imv", 
+#                  "prop_imv_in", "prop_imv_out", "ihm_outcome", "icu_outcome", 
+#                  "age_20_39_outcome", "age_40_59_outcome",
+#                  "niv_outcome","imv_outcome" )
 
 ## Calculate and paste RR with Confidence inTervals (bootstrap, 5000 resamples - default)
-get_rr_ci <- 
-    function(data, x) {
-        df <- data[, c("period", x)]
-        tb <- table(df$period, df %>% pull(x))
-        compar <- round(epitools::riskratio(tb, method = "boot")$measure[2, ], 3)
-        rr <- compar[1]
-        ci <- paste0(compar[c(2, 3)], collapse = "-")
-        rr_ci <- paste0(rr, " (",ci, ")")
-        print(x)
-        return(rr_ci)
-    }
-
-
-df_rr_waves <- 
-    v_variables %>% 
-    map_df(
-        ~tibble(
-            variable = .,
-            rr_ci_wave = get_rr_ci(df_covid_all_desc, .)
-            )
-        )
-
-
-df_rr_dominance <- 
-    v_variables %>% 
-    map_df(
-        ~tibble(
-            variable = .,
-            rr_ci_dominance = get_rr_ci(
-                df_covid_all_desc %>%
-                    filter(period == 2) %>% 
-                    mutate(
-                        period = case_when(
-                            # SEM_PRI_CONT <= 43 ~ 1,
-                            SEM_PRI_CONT <= 53 ~ 2,
-                            TRUE ~ 3
-                            )
-                        )
-                , .)
-            )
-        )
-
+# get_rr_ci <- 
+#     function(data, x) {
+#         df <- data[, c("period", x)]
+#         tb <- table(df$period, df %>% pull(x))
+#         compar <- round(epitools::riskratio(tb, method = "boot")$measure[2, ], 3)
+#         rr <- compar[1]
+#         ci <- paste0(compar[c(2, 3)], collapse = "-")
+#         rr_ci <- paste0(rr, " (",ci, ")")
+#         print(x)
+#         return(rr_ci)
+#     }
+# 
+# 
+# df_rr_waves <- 
+#     v_variables %>% 
+#     map_df(
+#         ~tibble(
+#             variable = .,
+#             rr_ci_wave = get_rr_ci(df_covid_all_desc, .)
+#             )
+#         )
+# 
+# 
+# df_rr_dominance <- 
+#     v_variables %>% 
+#     map_df(
+#         ~tibble(
+#             variable = .,
+#             rr_ci_dominance = get_rr_ci(
+#                 df_covid_all_desc %>%
+#                     filter(period == 2) %>% 
+#                     mutate(
+#                         period = case_when(
+#                             # SEM_PRI_CONT <= 43 ~ 1,
+#                             SEM_PRI_CONT <= 53 ~ 2,
+#                             TRUE ~ 3
+#                             )
+#                         )
+#                 , .)
+#             )
+#         )
+# 
 
 
 ## Descriptive Tables with rate ratios
 tb_desc_rr <- 
-    tb_desc %>% 
-    left_join(
-        df_rr_waves
-    ) %>% 
-    left_join(
-        df_rr_dominance
-    ) %>% 
-    mutate(
-        diff_wave      = 100 * (as.numeric(str_sub(rr_ci_wave, 1, 5)) - 1),
-        diff_dominance = 100 * (as.numeric(str_sub(rr_ci_dominance, 1, 5)) - 1)
-        
-    ) %>% 
-    select(
-        Characteristics, Period1, Period2, diff_wave, rr_ci_wave,
-        Period2.1, Period2.2, diff_dominance, rr_ci_dominance
-    )
+    tb_desc 
+    # %>% 
+    # left_join(
+    #     df_rr_waves
+    # ) %>%
+    # left_join(
+    #     df_rr_dominance
+    # ) %>%
+    # mutate(
+    #     diff_wave      = 100 * (as.numeric(str_sub(rr_ci_wave, 1, 5)) - 1),
+    #     diff_dominance = 100 * (as.numeric(str_sub(rr_ci_dominance, 1, 5)) - 1)
+    # 
+    # ) %>%
+    # select(
+    #     Characteristics, Period1, Period2, diff_wave, rr_ci_wave,
+    #     Period2.1, Period2.2, diff_dominance, rr_ci_dominance
+    # )
 
 
 tb_desc_rr_admissions <- 
+    # tb_desc_rr %>% 
     bind_rows(
-        df_admissions_week_wave %>% 
+        df_admissions_week_wave %>%
             bind_cols(
-                df_admissions_week_dominance %>% 
+                df_admissions_week_dominance %>%
                     select(-metrics)
-            ) %>% 
+            ) %>%
             rename(
                 Characteristics = metrics
-            ) %>% 
+            ) %>%
             mutate(
                 rr_ci_wave = NA,
                 rr_ci_dominance = NA
             ),
         tb_desc_rr
+    ) %>% 
+    mutate(
+        
+        Characteristics = case_when(
+            Characteristics == "median_iqr" ~ "Admissions per week, median (IQR)",
+            Characteristics == "max_admissions" ~ "Highest number of admissions in a week",
+            TRUE ~ Characteristics
+        )
     )
 
-writexl::write_xlsx(tb_desc_rr_admissions, "output/tb_desc_rr.xlsx")
+writexl::write_xlsx(tb_desc_rr_admissions %>% 
+                        select(
+                            Characteristics, Period1, Period2, Period2.1, Period2.2
+                        ) %>% 
+                        rename(
+                            "First wave" = Period1,
+                            "Second wave" = Period2,
+                            "Before E484K mutation dominance" = Period2.1,
+                            "After E484K mutation dominance" = Period2.2,
+                        ), "output/tb_desc_rr_2021-05-17.xlsx")
 
-# flextable::flextable(tb_desc_rr_admissions) %>% 
+
+
+# write_csv(tb_desc_rr_admissions %>% 
+#               select(
+#                   Characteristics, Period1, Period2, Period2.1, Period2.2
+#               ) %>% 
+#               rename(
+#                   "First wave" = Period1,
+#                   "Second wave" = Period2,
+#                   "Before E484K mutation dominance" = Period2.1,
+#                   "After E484K mutation dominance" = Period2.2,
+#               ), "shiny_app_sivep/app_data/tb_descriptive_waves.csv.gz")
+# 
+
+# 
+# flextable::flextable(tb_desc_rr_admissions)
 #     flextable::save_as_docx(., path = "output/tb_desc_rr.docx")
 
 

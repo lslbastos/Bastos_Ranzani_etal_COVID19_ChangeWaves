@@ -19,9 +19,13 @@ library(patchwork)
 
 #### importing previous cleanned database
 srag_adults_covid <-
-    data.table::fread("input/srag_adults_covid_2021-04-12_hosp.csv.gz", 
+    data.table::fread("data/srag_adults_covid_2021-05-17_hosp.csv.gz", 
                       na.strings = c("", "NA")) %>% 
-    as_tibble()
+    as_tibble() 
+    # %>% 
+    # filter(
+    #     SEM_PRI_ADJ <= max(SEM_PRI_ADJ) - 2
+    # )
 
 
 ### Reference dates from E484 mutation (outbreak.info)
@@ -38,9 +42,9 @@ df_date_ref <-
 
 df_plot_label_ref <- 
     tibble(
-        x = c(13, 47, 58),
+        x = c(13, 47, 60),
         y = c(0.75, 0.75, 0.70),
-        label = c("1st wave", "2nd wave", "Dominance\nE484K mutation"),
+        label = c("1st wave", "2nd wave", "Dominance of\nE484K mutation"),
         fontface = c("bold", "bold", "plain")
         # size = c(3, 3, 2)
     )
@@ -56,10 +60,13 @@ delay <- 4
 df_covid_ihm_week <-  
     srag_adults_covid %>% 
     bind_rows(
+        srag_adults_covid, 
         srag_adults_covid %>% 
-            mutate(REGIAO = "Brazil")
+            mutate(REGIAO = "Brazil"),
+        srag_adults_covid %>% 
+            mutate(REGIAO = SG_UF_INTE)
     ) %>% 
-    group_by(REGIAO, week = SEM_PRI_ADJ, ano_pri_week_IHM) %>% 
+    group_by(REGIAO, week = SEM_PRI_ADJ, ano_pri_week_IHM, week_start) %>% 
     summarise(
         ihm = sum(EVOLUCAO == "Death", na.rm = TRUE) / sum(EVOLUCAO %in% c("Death", "Discharge"), na.rm = TRUE),
         ihm_sat_yes = sum(SATURACAO_m == "Yes" & EVOLUCAO == "Death", na.rm = TRUE) / sum(SATURACAO_m == "Yes" & EVOLUCAO %in% c("Death", "Discharge"), na.rm = TRUE),
@@ -67,13 +74,23 @@ df_covid_ihm_week <-
         ihm_imv     = sum(SUPORT_VEN == "Invasive" & EVOLUCAO == "Death", na.rm = TRUE) / sum(SUPORT_VEN == "Invasive" & EVOLUCAO %in% c("Death", "Discharge"), na.rm = TRUE)
         
     ) %>% 
+    ungroup() %>% 
+    replace_na(list(ihm = 0, ihm_sat_yes = 0, ihm_niv = 0, ihm_imv = 0)) %>% 
+    group_by(REGIAO, week) %>% 
+    slice(2:n()) %>% 
     ungroup()
 
 
 
 ## Plot settings for 'x' axis - Epidemiological weeks
-week_range <- c(seq(13, 46, 13), 53, max(df_covid_ihm_week$week))
-epi_weeks_label <- unique(df_covid_ihm_week$ano_pri_week_IHM[df_covid_ihm_week$week %in% week_range])
+# week_range <- c(seq(13, 46, 13), 53, max(df_covid_ihm_week$week))
+# epi_weeks_label <- unique(df_covid_ihm_week$ano_pri_week_IHM[df_covid_ihm_week$week %in% week_range])
+
+df_epi_weeks_label_IHM <-
+    df_covid_ihm_week %>% 
+    distinct(week, ano_pri_week_IHM, week_start) %>% 
+    filter(week %in% c(seq(13, 13*5, 13))) %>% 
+    arrange(week)
 
 
 
@@ -101,8 +118,8 @@ plot_covid_week_ihm_sat <-
     scale_y_continuous(labels = scales::percent_format(), limits = c(0, 0.75),
                        breaks = c(0, 0.25, 0.5, 0.75)
                        ) +
-    scale_x_continuous(breaks = week_range,
-                       labels = epi_weeks_label
+    scale_x_continuous(breaks = df_epi_weeks_label_IHM$week,
+                       labels = format(df_epi_weeks_label_IHM$week_start, format = "%d/%b/%y")
                        ) + 
     scale_color_manual(name = "Hospital Admissions",
                        values = c("#0099B47F", "#0099B4FF")
@@ -149,8 +166,8 @@ plot_covid_week_ihm_resp_supp <-
                        values = c("#AD002A7F", "#AD002AFF")
                        ) +
     scale_y_continuous(labels = scales::percent_format(), limits = c(0, 1)) +
-    scale_x_continuous(breaks = week_range,
-                       labels = epi_weeks_label
+    scale_x_continuous(breaks = df_epi_weeks_label_IHM$week,
+                       labels = format(df_epi_weeks_label_IHM$week_start, format = "%d/%b/%y")
     ) + 
     geom_vline(data = df_date_ref, aes(xintercept = 43), linetype = "dashed") +
     labs(
@@ -169,16 +186,19 @@ plot_covid_week_ihm_resp_supp <-
 
 ## In-hospital mortality per age group
 df_covid_ihm_week_age <-  
-    srag_adults_covid %>% 
     bind_rows(
+        srag_adults_covid, 
         srag_adults_covid %>% 
-            mutate(REGIAO = "Brazil")
+            mutate(REGIAO = "Brazil"),
+        srag_adults_covid %>% 
+            mutate(REGIAO = SG_UF_INTE)
     ) %>% 
-    group_by(REGIAO, FAIXA_IDADE_SIMP, week = SEM_PRI_ADJ) %>% 
+    group_by(REGIAO, FAIXA_IDADE_SIMP, week = SEM_PRI_ADJ, week_start) %>% 
     summarise(
         ihm = sum(EVOLUCAO == "Death", na.rm = TRUE) / sum(EVOLUCAO %in% c("Death", "Discharge"), na.rm = TRUE),
     ) %>%
-    ungroup()
+    ungroup() %>% 
+    replace_na(list(ihm = 0, ihm_sat_yes = 0, ihm_niv = 0, ihm_imv = 0))
 
 
 # Plot: In-hospital mortality per age group
@@ -202,8 +222,8 @@ plot_covid_week_ihm_age <-
                        values = c("#42B5407F", "#42B540FF"),
                        ) +
     scale_y_continuous(labels = scales::percent_format(), limits = c(0, 0.8)) +
-    scale_x_continuous(breaks = week_range,
-                       labels = epi_weeks_label
+    scale_x_continuous(breaks = df_epi_weeks_label_IHM$week,
+                       labels = format(df_epi_weeks_label_IHM$week_start, format = "%d/%b/%y")
     ) + 
     geom_vline(data = df_date_ref, aes(xintercept = 43), linetype = "dashed") +
     labs(
@@ -223,7 +243,7 @@ plot_comb_week_all <-
     (plot_covid_week_ihm_sat / plot_covid_week_ihm_age / plot_covid_week_ihm_resp_supp)
 
 
-ggsave("output/2021-04-12_plot_comb_IHM.png",
+ggsave("output/2021-05-17_plot_comb_IHM.png",
        plot = plot_comb_week_all, width = 6, height = 11,
        unit = "in", dpi = 800)
 
@@ -238,7 +258,11 @@ ggsave("output/2021-04-12_plot_comb_IHM.png",
 
 # Exporting data for shiny app --------------------------------------------
 
-write_csv(df_covid_ihm_week, "shiny_app_sivep/app_data/df_covid_ihm_week.csv.gz")
+# write_csv(df_covid_ihm_week, "shiny_app_sivep/app_data/df_covid_ihm_week.csv.gz")
+# 
+# write_csv(df_covid_ihm_week_age, "shiny_app_sivep/app_data/df_covid_ihm_week_age.csv.gz")
+# 
+saveRDS(df_covid_ihm_week, "shiny_app_sivep/app_data/df_covid_ihm_week.rds")
 
-write_csv(df_covid_ihm_week_age, "shiny_app_sivep/app_data/df_covid_ihm_week_age.csv.gz")
+saveRDS(df_covid_ihm_week_age, "shiny_app_sivep/app_data/df_covid_ihm_week_age.rds")
 
