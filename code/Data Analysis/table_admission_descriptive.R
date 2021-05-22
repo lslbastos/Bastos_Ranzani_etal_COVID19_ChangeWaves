@@ -16,13 +16,15 @@ library(tidylog)
 library(gtsummary)
 library(patchwork)
 
+release_date <- "2021-05-17"
+release_file <- paste0("input/srag_adults_covid_hosp_", release_date,".csv.gz")
 
 delay <- 4
 
 #### importing previous cleanned database
 srag_adults_covid <-
-    data.table::fread("data/srag_adults_covid_2021-05-17_hosp.csv.gz", 
-                      na.strings = c("", "NA")) %>% 
+    data.table::fread(release_file,
+                      na.strings = c("", "NA")) %>%
     as_tibble() %>% 
     filter(
         SEM_PRI_ADJ <= (max(SEM_PRI_ADJ) - delay)
@@ -235,6 +237,7 @@ tb_covid_all <-
         age_high60,
         CS_RACA,
         CS_ESCOL_N,
+        IS_CAPITAL,
         CS_ZONA,
         SATURACAO_m,
         # age_20_39_sat,
@@ -314,6 +317,7 @@ tb_covid_per2 <-
         age_high60,
         CS_RACA,
         CS_ESCOL_N,
+        IS_CAPITAL,
         CS_ZONA,
         SATURACAO_m,
         # age_20_39_sat,
@@ -580,7 +584,7 @@ writexl::write_xlsx(tb_desc_rr_admissions %>%
                             "Second wave" = Period2,
                             "Before E484K mutation dominance" = Period2.1,
                             "After E484K mutation dominance" = Period2.2,
-                        ), "output/tb_desc_rr_2021-05-17.xlsx")
+                        ), paste0("output/tb_desc_rr_", release_date, ".xlsx"))
 
 
 

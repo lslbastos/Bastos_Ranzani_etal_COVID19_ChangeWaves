@@ -16,17 +16,26 @@
 library(tidyverse)
 # library(tidylog)
 
-
-
-
 ## Import SIVEP-Gripe files from 2020 and 2021
+release_date <- "2021-05-17"
+
 
 # Downloading from URL
 source("code/Auxiliary Functions/download_sivep.R")
-srag <- download_sivep(date = "2021-05-17", return_df = TRUE)
+srag <- download_sivep(date = release_date, 
+                       return_df = TRUE, 
+                       save_file = TRUE, 
+                       output_folder = "data"
+                       ) 
+    # %>% 
+    # tibble()
 
 # Reading from disk file
-# srag <- vroom::vroom("data/sivep_raw_2021-04-05.csv.gz",
+# release_file <- paste0("data/sivep_raw_", release_date,".csv.gz")
+# srag <- data.table::fread(release_file, na.strings = c("", "NA")) %>% 
+#     tibble()
+
+# srag <- vroom::vroom("data/sivep_raw_2021-05-17.csv.gz",
 #                      col_types = cols(
 #                          .default = col_character(),
 #                          SEM_NOT = col_double(),
@@ -36,7 +45,7 @@ srag <- download_sivep(date = "2021-05-17", return_df = TRUE)
 #                          ),
 #                      )
 
-name_file_output <- "srag_adults_covid_2021-05-17_hosp"
+name_file_output <- paste0("srag_adults_covid_hosp_", release_date)
 
 ## Filter: Admissions after Feb 16 (Epidemiological Week 8 - COVID in Brazil)
 srag <- 
@@ -57,8 +66,8 @@ srag <-
     srag %>% 
     mutate(
         CLASSI_FIN = case_when(
-            PCR_SARS2 == 1 ~ "5", # column Sars-CoV-2
-            str_detect(DS_PCR_OUT, "SARS|COVID|COV|CORONA|CIVID") & !str_detect(DS_PCR_OUT,"63|43|229|HK|RINO|SINCI|PARE") == TRUE ~ "5", #other PCRs, Sars-CoV2
+            PCR_SARS2 == 1 ~ 5L, # column Sars-CoV-2
+            str_detect(DS_PCR_OUT, "SARS|COVID|COV|CORONA|CIVID") & !str_detect(DS_PCR_OUT,"63|43|229|HK|RINO|SINCI|PARE") == TRUE ~ 5L, #other PCRs, Sars-CoV2
             TRUE ~ CLASSI_FIN
         )
     )
@@ -303,7 +312,15 @@ srag_adults_covid <-
         CONT_COMORB_mreal == 1 ~ 1,
         CONT_COMORB_mreal == 2 ~ 1,
         CONT_COMORB_mreal >  2 ~ 2)
-    ) 
+    ) %>% 
+    mutate(
+        CS_ZONA = case_when(
+            CS_ZONA == 1 ~ "Urban",
+            CS_ZONA == 2 ~ "Rural",
+            CS_ZONA == 3 ~ "Peri-urban"
+        )
+    )
+    
 
 
 rm(db_temp) ## Removing temporary database for comorbidity prep
@@ -338,7 +355,7 @@ srag_adults_covid_final <-
         ),
         SEM_PRI_CONT = case_when(
             ano_pri == 2021 ~ SEM_PRI + 53,
-            TRUE ~ SEM_PRI
+            TRUE ~ as.numeric(SEM_PRI)
         ),
         SEM_PRI_ADJ = case_when(
             ano_pri == 2020 & SEM_PRI_CONT <= 12 ~ 12,
@@ -381,16 +398,20 @@ srag_adults_covid_final <-
     group_by(SEM_PRI_CONT) %>% 
     mutate(
         week_start = min(date_sint),
-        week_end = max(date_sint)
+        week_end = max(date_sint),
+        CO_MU_INTE = as.character(CO_MU_INTE)
+    ) %>% 
+    ungroup() %>% 
+    left_join(
+        read_csv("https://raw.githubusercontent.com/kelvins/Municipios-Brasileiros/main/csv/municipios.csv") %>% 
+            mutate(codigo_ibge_6dig = str_sub(codigo_ibge, 1, 6)) %>%
+            select(capital, codigo_ibge_6dig), 
+        by = c("CO_MU_INTE" = "codigo_ibge_6dig")
     ) %>% 
     mutate(
-        CS_ZONA = case_when(
-            CS_ZONA == 1 ~ "Urban",
-            CS_ZONA == 2 ~ "Rural",
-            CS_ZONA == 3 ~ "Peri-urban"
-         )
-    ) %>% 
-    ungroup()
+        IS_CAPITAL = ifelse(capital == 1, "Yes", "No")
+        )
+
 
 
 
@@ -400,9 +421,9 @@ rm(srag_adults_covid) # Removes SIVEP with all columns
 
 # write_csv(srag_adults_covid_final, paste0("data/", name_file_output,".csv.gz"))
 
-data.table::fwrite(srag_adults_covid_final, paste0("data/", name_file_output,".csv.gz"))
+data.table::fwrite(srag_adults_covid_final, paste0("input/", name_file_output,".csv.gz"))
 
-saveRDS(srag_adults_covid_final, paste0("data/", name_file_output,".rds"))
+saveRDS(srag_adults_covid_final, paste0("input/", name_file_output,".rds"))
 
 
 # finished

@@ -16,17 +16,15 @@ library(tidyverse)
 library(tidylog)
 library(patchwork)
 
+release_date <- "2021-05-17"
+release_file <- paste0("input/srag_adults_covid_hosp_", release_date,".csv.gz")
 
-#### importing previous cleanned database
+#### importing previous cleaned database
 srag_adults_covid <-
-    data.table::fread("data/srag_adults_covid_2021-05-17_hosp.csv.gz",
+    data.table::fread(release_file,
                       na.strings = c("", "NA")) %>%
-    as_tibble() 
-    # %>%
-    # filter(SG_UF_INTE == "PA")
+    as_tibble()
     
-
-
 
 # Volume per Epidemiological Weeks ----------------------------------------
 
@@ -83,6 +81,10 @@ df_covid_data_week_all <-
 # S:E484K mutation dominance: the date/week with prevalence over 50% of samples
 #                 (around December 28 or 29, 2020 - Epi. Week 53/2020)
 
+
+# Number of weeks for delay
+delay <- 4
+
 max_vol_labels <- max(df_covid_data_week_all$notif) - 500
 
 df_date_ref <- 
@@ -102,8 +104,7 @@ df_plot_label_ref <-
     )
 
 
-# Number of weeks for delay
-delay <- 4
+
 
 
 
@@ -332,7 +333,7 @@ plot_comb_week_all <-
               plot_covid_week_death) ) 
 
 
-ggsave("output/fig1_hosp_week_2021-05-17.pdf",
+ggsave(paste0("output/fig1_hosp_week_", release_date,".pdf"),
        plot = plot_comb_week_all, width = 13, height = 9,
        unit = "in", dpi = 800)
 
@@ -354,3 +355,9 @@ ggsave("output/fig1_hosp_week_2021-05-17.pdf",
 saveRDS(df_covid_data_week_all, "shiny_app_sivep/app_data/df_covid_data_week_all.rds")
 
 saveRDS(df_covid_data_week_age, "shiny_app_sivep/app_data/df_covid_data_week_age.rds")
+
+
+
+saveRDS(df_covid_data_week_all, "input/app_data/df_covid_data_week_all.rds")
+
+saveRDS(df_covid_data_week_age, "input/app_data/df_covid_data_week_age.rds")

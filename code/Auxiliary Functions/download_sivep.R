@@ -5,8 +5,8 @@
 
 ## Requires packages: 'vroom', 'readr', 'stringr', 'here', 'purrr', 'data.table'
 
-download_sivep <- function(date = "2021-04-05", output_folder = here::here(),
-                           return_df = FALSE) {
+download_sivep <- function(date, output_folder = here::here(),
+                           return_df = FALSE, save_file = TRUE) {
 
     output_file <- paste0(output_folder, "/sivep_raw_", date, ".csv.gz")
     
@@ -31,28 +31,36 @@ download_sivep <- function(date = "2021-04-05", output_folder = here::here(),
     # Downloads SIVEP 2020-2021    
     sivep_raw <- purrr::map_df(
         ls_sivep_urls,
-        ~vroom::vroom(.,
-                      col_types = vroom::cols(
-                          .default  = vroom::col_character(),
-                          SEM_NOT    = vroom::col_double(),
-                          SEM_PRI    = vroom::col_double(),
-                          NU_IDADE_N = vroom::col_double(),
-                          TP_IDADE   = vroom::col_double()
-                          )
-                      )
-        )
+        ~data.table::fread(., na.strings = c("", "NA", NULL))
+        # ~vroom::vroom(.,
+        #               col_types = vroom::cols(
+        #                   .default   = vroom::col_character(),
+        #                   SEM_NOT    = vroom::col_double(),
+        #                   SEM_PRI    = vroom::col_double(),
+        #                   NU_IDADE_N = vroom::col_double(),
+        #                   TP_IDADE   = vroom::col_double()
+        #                   )
+        #               ), delim = ";"
+        ) 
+        # %>% 
+        # purrr::map_df(
+        #     ~tibble::tibble(.)
+        # )
 
-
-    
-    if (return_df) {
-        # Exports SIVEP in a CSV file
-        return(sivep_raw)
-        
-    } else{
+    if (save_file) {
         # Exports SIVEP in a CSV file
         data.table::fwrite(sivep_raw, paste0(output_file))
         print(paste0("Finished! File created at: workdir/", output_folder))
+        
     }
+    
+    if (return_df) {
+        # Returns sivep data as a DF
+        return(tibble(sivep_raw))
+        
+    } 
+    
+
 
 }
 

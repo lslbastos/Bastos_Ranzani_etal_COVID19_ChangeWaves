@@ -29,13 +29,15 @@ paste_iqr <- function(x) {
     }
 
 
+release_date <- "2021-05-17"
+release_file <- paste0("input/srag_adults_covid_hosp_", release_date,".csv.gz")
 
 delay <- 4
 
 #### importing previous cleanned database
 srag_adults_covid <-
-    data.table::fread("data/srag_adults_covid_2021-05-17_hosp.csv.gz", 
-                      na.strings = c("", "NA")) %>% 
+    data.table::fread(release_file,
+                      na.strings = c("", "NA")) %>%
     as_tibble() %>% 
     filter(
         SEM_PRI_ADJ <= (max(SEM_PRI_ADJ) - delay)
@@ -47,7 +49,6 @@ srag_adults_covid <-
             TRUE ~ ">=60"
         )
     )
-
 
 
 ### Reference dates from E484 mutation (outbreak.info)
@@ -407,6 +408,26 @@ dates_periods <-
         )
 
 
+
+write_csv(tb_desc_admissions %>% 
+            select(
+                REGIAO, Characteristics, Period1, Period2
+                # Period2, Period2.1, Period2.2
+            ) %>% 
+            set_names(
+                c("REGIAO", "Characteristics", 
+                  as.character(dates_periods[1, 2]), as.character(dates_periods[2, 2])
+                )
+            ) %>% 
+            mutate(
+                
+                Characteristics = case_when(
+                    Characteristics == "median_iqr" ~ "Admissions per week, median (IQR)",
+                    Characteristics == "max_admissions" ~ "Highest number of admissions in a week",
+                    TRUE ~ Characteristics
+                )
+            )
+        , "shiny_app_sivep/app_data/tb_descriptive_waves.csv.gz")
 
 
 saveRDS(tb_desc_admissions %>% 

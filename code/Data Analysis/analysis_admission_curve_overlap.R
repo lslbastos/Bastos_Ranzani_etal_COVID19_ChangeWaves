@@ -18,11 +18,16 @@ library(gtsummary)
 library(patchwork)
 
 
+release_date <- "2021-05-17"
+release_file <- paste0("input/srag_adults_covid_hosp_", release_date,".csv.gz")
+
+
 #### importing previous cleanned database
 srag_adults_covid <-
-    data.table::fread("data/srag_adults_covid_2021-05-17_hosp.csv.gz", 
-                      na.strings = c("", "NA")) %>% 
+    data.table::fread(release_file,
+                      na.strings = c("", "NA")) %>%
     as_tibble()
+
 
 delay <- 4
 
@@ -279,7 +284,7 @@ plot_overlap_comb <-
 
 
 
-ggsave("output/2021-05-17_plot_overlap_comb_ribbon.png",
+ggsave(paste0("output/plot_overlap_comb_ribbon_", release_date,".png"),
        plot = plot_overlap_comb, width = 6, height = 9,
        unit = "in", dpi = 800)
 

@@ -17,15 +17,16 @@ library(tidylog)
 library(patchwork)
 
 
+release_date <- "2021-05-17"
+release_file <- paste0("input/srag_adults_covid_hosp_", release_date,".csv.gz")
+
+
 #### importing previous cleanned database
 srag_adults_covid <-
-    data.table::fread("data/srag_adults_covid_2021-05-17_hosp.csv.gz", 
-                      na.strings = c("", "NA")) %>% 
-    as_tibble() 
-    # %>% 
-    # filter(
-    #     SEM_PRI_ADJ <= max(SEM_PRI_ADJ) - 2
-    # )
+    data.table::fread(release_file,
+                      na.strings = c("", "NA")) %>%
+    as_tibble()
+
 
 
 ### Reference dates from E484 mutation (outbreak.info)
@@ -243,7 +244,7 @@ plot_comb_week_all <-
     (plot_covid_week_ihm_sat / plot_covid_week_ihm_age / plot_covid_week_ihm_resp_supp)
 
 
-ggsave("output/2021-05-17_plot_comb_IHM.png",
+ggsave(paste0("output/fig_plot_comb_IHM_", release_date,".png"),
        plot = plot_comb_week_all, width = 6, height = 11,
        unit = "in", dpi = 800)
 
@@ -265,4 +266,9 @@ ggsave("output/2021-05-17_plot_comb_IHM.png",
 saveRDS(df_covid_ihm_week, "shiny_app_sivep/app_data/df_covid_ihm_week.rds")
 
 saveRDS(df_covid_ihm_week_age, "shiny_app_sivep/app_data/df_covid_ihm_week_age.rds")
+
+
+saveRDS(df_covid_ihm_week, "input/app_data/df_covid_ihm_week.rds")
+
+saveRDS(df_covid_ihm_week_age, "input/app_data/df_covid_ihm_week_age.rds")
 
