@@ -27,9 +27,15 @@ library(tidylog)
 ## Importing data from URL
 source("code/Auxiliary Functions/download_google_mobility.R")
 df_mob_report <-
-    download_google_mobility(return_df = TRUE) %>%
-    filter(is.na(sub_region_1)) %>%
-    select(date, ends_with("_percent_change_from_baseline")) %>%
+    download_google_mobility(return_df = TRUE, country = "Brazil") %>%
+    filter(is.na(sub_region_2)) %>%
+    mutate(
+        region = case_when(
+            is.na(sub_region_1) ~ "Brazil",
+            TRUE ~ sub_region_1
+        )
+    ) %>%
+    select(date, region, ends_with("_percent_change_from_baseline")) %>%
     rename(
         "Retail and Recreation" = retail_and_recreation_percent_change_from_baseline,
         "Grocery and Pharmacy"  = grocery_and_pharmacy_percent_change_from_baseline,
@@ -43,10 +49,14 @@ df_mob_report <-
 # Combining data into a single DF
 # df_mob_report <-
 #     vroom::vroom("input/google_mobility_raw_Brazil.csv.gz") %>%
-#     filter(is.na(sub_region_1)) %>%
-#     # filter(sub_region_1 == "State of São Paulo", is.na(sub_region_2)) %>%
-#     # filter(sub_region_2 == "Rio de Janeiro" ) %>%
-#     select(date, ends_with("_percent_change_from_baseline")) %>%
+#     filter(is.na(sub_region_2)) %>%
+#     mutate(
+#         region = case_when(
+#             is.na(sub_region_1) ~ "Brazil",
+#             TRUE ~ sub_region_1
+#             )
+#         ) %>%
+#     select(date, region, ends_with("_percent_change_from_baseline")) %>%
 #     rename(
 #         "Retail and Recreation" = retail_and_recreation_percent_change_from_baseline,
 #         "Grocery and Pharmacy"  = grocery_and_pharmacy_percent_change_from_baseline,
@@ -54,7 +64,7 @@ df_mob_report <-
 #         "Transit stations"   = transit_stations_percent_change_from_baseline,
 #         "Workplaces"         = workplaces_percent_change_from_baseline,
 #         "Residential"        = residential_percent_change_from_baseline
-#     )
+#         )
 
 
 
@@ -71,11 +81,13 @@ df_plot_label_ref <-
 
 date_modified <- curl::curl_fetch_memory("https://www.google.com/covid19/mobility/")$modified
 date_export <- format(as.Date(date_modified), "%B %d, %Y")
-date_last_update <- format(as.Date(max(df_mob_report$date)), "%B %d, %Y")
+date_last_update <- format(max(df_mob_report$date), "%B %d, %Y")
 
 
 plot_mobility <- 
     df_mob_report %>% 
+    filter(region == "Brazil") %>% 
+    select(-region) %>% 
     pivot_longer(-date, names_to = "type", values_to = "change") %>%
     group_by(type) %>%
     arrange(type, date) %>% 
@@ -112,8 +124,11 @@ plot_mobility <-
     )
 
 
-ggsave(paste0("output/", as.Date(date_modified),"_plot_google_mobility_MM7.png"),
+ggsave(paste0("output/_plot_google_mobility_MM7", as.Date(date_modified),".png"),
        plot = plot_mobility, width = 8, height = 8,
        unit = "in", dpi = 800)
 
 
+# Exporting processed data
+write_csv(df_mob_report, "output/df_mob_report.csv.gz")
+write_csv(df_mob_report, "input/app_data/df_mob_report.csv.gz")

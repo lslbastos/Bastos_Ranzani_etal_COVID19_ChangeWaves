@@ -4,8 +4,10 @@
 
 ## Requires packages: 'vroom', 'readr', 'stringr', 'here', 'purrr', 'data.table'
 
-download_google_mobility <- function(country = "Brazil", output_folder = here::here(),
-                           return_df = FALSE) {
+download_google_mobility <- function(country = "Brazil", 
+                                     output_folder = here::here(),
+                                     save_file = TRUE,
+                                     return_df = FALSE) {
 
     
     output_file <- paste0(output_folder, "/google_mobility_raw_", gsub(" ", "_", country), ".csv.gz")
@@ -38,15 +40,18 @@ download_google_mobility <- function(country = "Brazil", output_folder = here::h
     }
 
     
-    if (return_df) {
-        # Exports SIVEP in a CSV file
-        return(g_mob_raw)
-        
-    } else{
+    if (save_file) {
         # Exports SIVEP in a CSV file
         data.table::fwrite(g_mob_raw, paste0(output_file))
         print(paste0("Finished! File created at: workdir/", output_folder))
     }
+    
+    
+    if (return_df) {
+        # Exports SIVEP in a CSV file
+        return(g_mob_raw)
+        
+    } 
 
 }
 
