@@ -83,6 +83,7 @@ ls_labels_all <-
         CS_RACA ~ "Self-reported race, n(%)",
         
         CS_ESCOL_N ~ "Self-reported level of education, n (%)",
+        IS_CAPITAL ~ "Residing in state capital, n (%)",
         CS_ZONA ~ "Area of residence, n(%)",
         
         SATURACAO_m ~ "Hypoxaemia, n (%)",
@@ -104,13 +105,13 @@ ls_labels_all <-
         prop_imv_in ~ "IMV inside ICU, n(%)",
         prop_imv_out ~ "IMV outside ICU, n(%)",
         
-        ihm_outcome ~ "Overall, n (%)",
-        age_20_39_outcome ~ "20-39 years",
-        age_40_59_outcome ~ "40-59 years",
-        age_high60_outcome ~ ">= 60 years",
-        icu_outcome ~ "ICU admission, n (%)",
-        niv_outcome ~ "NIV, n (%)",
-        imv_outcome ~ "IMV, n (%)"
+        ihm_outcome ~ "In-hospital mortality (IHM) - admissions with an outcome, n (%)",
+        age_20_39_outcome  ~ "IHM: 20-39 years",
+        age_40_59_outcome  ~ "IHM: 40-59 years",
+        age_high60_outcome ~ "IHM:>= 60 years",
+        icu_outcome ~ "IHM: ICU admission, n (%)",
+        niv_outcome ~ "IHM: NIV, n (%)",
+        imv_outcome ~ "IHM: IMV, n (%)"
     )
 
 
@@ -233,6 +234,7 @@ tb_covid_all <-
         age_high60,
         CS_RACA,
         CS_ESCOL_N,
+        IS_CAPITAL,
         CS_ZONA,
         SATURACAO_m,
         # age_20_39_sat,
