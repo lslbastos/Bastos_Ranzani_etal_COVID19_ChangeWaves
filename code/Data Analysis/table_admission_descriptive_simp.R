@@ -30,7 +30,7 @@ paste_iqr <- function(x) {
 
 
 release_date <- "2021-05-17"
-release_file <- paste0("input/srag_adults_covid_hosp_", release_date,".csv.gz")
+release_file <- paste0("data/srag_adults_covid_hosp_", release_date,".csv.gz")
 
 delay <- 4
 
@@ -269,7 +269,8 @@ tb_covid_all <-
             all_categorical() ~ c(0, 1)
         )
     ) %>% 
-    add_n()
+    add_n() %>% 
+    add_overall()
 
 
 
@@ -280,6 +281,7 @@ tb_overall_desc <-
     select(-c(var_type)) %>% 
     mutate(label = ifelse(row_type == "label", paste0(label, " [n = ", n, "]"), label)) %>% 
     rename("Characteristics" = "label",
+           "Overall" = "stat_0",
            "Period1" = "stat_1",
            "Period2" = "stat_2"
     ) %>% 
@@ -297,6 +299,10 @@ tb_overall_desc <-
 ## Admissions per week - 1st and 2nd wave
 df_admissions_week_wave <-
     df_covid_all_desc_filter %>% 
+    bind_rows(
+        df_covid_all_desc %>% 
+            mutate(period = 0)
+    ) %>%
     group_by(period, ano_pri, SEM_PRI, SEM_PRI_CONT) %>% 
     summarise(
         total = n()
@@ -310,6 +316,7 @@ df_admissions_week_wave <-
     pivot_longer(-c(period), names_to = "metrics", values_to = "val") %>%
     pivot_wider(names_from = "period", values_from = "val") %>% 
     rename(
+        Overall = `0`,
         Period1 = `1`,
         Period2 = `2` 
     ) %>% 
@@ -319,7 +326,8 @@ df_admissions_week_wave <-
             metrics == "median_iqr" ~ round((100 * ((as.numeric(str_extract(Period2, ".*\\s")) / as.numeric(str_extract(Period1, ".*\\s"))) - 1)), 1),
             TRUE ~ NA_real_
         )
-    )
+    ) %>% 
+    select(metrics, Overall, Period1, Period2, diff_wave)
 
 
 
@@ -332,6 +340,7 @@ tb_desc_admissions <-
     df_admissions_week_wave %>%
     select(
         Characteristics = metrics,
+        Overall,
         Period1,
         Period2
     ) %>% 
@@ -413,11 +422,11 @@ dates_periods <-
 
 write_csv(tb_desc_admissions %>% 
             select(
-                REGIAO, Characteristics, Period1, Period2
+                REGIAO, Characteristics, Overall, Period1, Period2
                 # Period2, Period2.1, Period2.2
             ) %>% 
             set_names(
-                c("REGIAO", "Characteristics", 
+                c("REGIAO", "Characteristics", "Overall", 
                   as.character(dates_periods[1, 2]), as.character(dates_periods[2, 2])
                 )
             ) %>% 
@@ -434,11 +443,11 @@ write_csv(tb_desc_admissions %>%
 
 saveRDS(tb_desc_admissions %>% 
               select(
-                  REGIAO, Characteristics, Period1, Period2
+                  REGIAO, Characteristics, Overall, Period1, Period2
                   # Period2, Period2.1, Period2.2
               ) %>% 
             set_names(
-                c("REGIAO", "Characteristics", 
+                c("REGIAO", "Characteristics", "Overall", 
                   as.character(dates_periods[1, 2]), as.character(dates_periods[2, 2])
                   )
             ) %>% 
