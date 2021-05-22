@@ -67,7 +67,40 @@ df_mob_report <-
 #         )
 
 
-
+## Adjusting States
+df_mob_report <- df_mob_report %>% 
+    mutate(
+        region = fct_recode(region,
+            "DF" = "Federal District",            
+            "AC" = "State of Acre",               
+            "AL" = "State of Alagoas",            
+            "AP" = "State of Amapá",              
+            "AM" = "State of Amazonas",           
+            "BA" = "State of Bahia",              
+            "CE" = "State of Ceará",              
+            "ES" = "State of Espírito Santo",     
+            "GO" = "State of Goiás",              
+            "MA" = "State of Maranhão",           
+            "MT" = "State of Mato Grosso",       
+            "MS" = "State of Mato Grosso do Sul", 
+            "MG" = "State of Minas Gerais",       
+            "PA" = "State of Pará",               
+            "PB" = "State of Paraíba",            
+            "PR" = "State of Paraná",             
+            "PE" = "State of Pernambuco",         
+            "PI" = "State of Piauí",              
+            "RJ" = "State of Rio de Janeiro",     
+            "RN" = "State of Rio Grande do Norte",
+            "RS" = "State of Rio Grande do Sul",  
+            "RO" = "State of Rondônia",           
+            "RR" = "State of Roraima",            
+            "SC" = "State of Santa Catarina",     
+            "SP" = "State of São Paulo",          
+            "SE" = "State of Sergipe",            
+            "TO" = "State of Tocantins", 
+        )
+    )
+    
 
 # Plots: Average daily prevalence of variants/mutation in Time -----------------------------------
 df_plot_label_ref <- 
