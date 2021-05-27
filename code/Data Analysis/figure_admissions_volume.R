@@ -9,7 +9,9 @@
 #################################### #################################### #################################
 #################################### #################################### #################################
 
-Sys.setlocale(category = "LC_ALL", locale = "english")
+# Sys.setlocale(category = "LC_ALL", locale = "english")
+Sys.setlocale("LC_ALL", "en_US.UTF-8")
+
 
 # Libraries ---------------------------------------------------------------
 library(tidyverse)
@@ -333,7 +335,7 @@ plot_comb_week_all <-
               plot_covid_week_death) ) 
 
 
-ggsave(paste0("output/fig1_hosp_week_", release_date,".png"),
+ggsave(paste0("output/fig1_hosp_week_", release_date,".tiff"),compression = "lzw",
        plot = plot_comb_week_all, width = 13, height = 9,
        unit = "in", dpi = 800)
 
