@@ -16,8 +16,8 @@ library(tidylog)
 library(gtsummary)
 library(patchwork)
 
-release_date <- "2021-05-17"
-release_file <- paste0("input/srag_adults_covid_hosp_", release_date,".csv.gz")
+release_date <- "2021-05-24"
+release_file <- paste0("data/srag_adults_covid_hosp_", release_date,".csv.gz")
 
 delay <- 4
 

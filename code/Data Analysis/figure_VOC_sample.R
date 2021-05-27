@@ -21,11 +21,11 @@ library(tidylog)
 ##   in March 31, 2021
 
 # Input Data
-df_SE484K <- read_tsv("input/SE484K_outbreakinfo_mutation_report_data_2021-05-19.tsv")
+df_SE484K <- read_tsv("input/SE484K_outbreakinfo_mutation_report_data_2021-05-26.tsv")
 
-df_P1 <- read_tsv("input/P1_outbreakinfo_mutation_report_data_2021-05-19.tsv")
+df_P1 <- read_tsv("input/P1_outbreakinfo_mutation_report_data_2021-05-26.tsv")
 
-df_B117 <- read_tsv("input/B117_outbreakinfo_mutation_report_data_2021-05-19.tsv")
+df_B117 <- read_tsv("input/B117_outbreakinfo_mutation_report_data_2021-05-26.tsv")
 
 
 
@@ -78,13 +78,12 @@ plot_daily_prev <-
         y = "Prevalence",
         title = "Average daily prevalence",
         subtitle = paste0("Source: GISAID - SARS-CoV-2 (hCoV-19) Mutation Reports (outbreak.info/situation-reports)\n",
-                          "Last update: ", date_last_update, " | ",
-                          "Data export: May 19, 2021")
+                          "Last update: ", date_last_update)
     ) +
     theme_classic()
 
 
-ggsave(paste0("output/plot_daily_prev_variants_2021-05-19.png"),
+ggsave(paste0("output/plot_daily_prev_variants_2021-05-26.png"),
        plot = plot_daily_prev, width = 7, height = 4,
        unit = "in", dpi = 800)
 

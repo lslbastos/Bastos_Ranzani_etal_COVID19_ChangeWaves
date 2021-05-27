@@ -27,7 +27,7 @@ library(tidylog)
 ## Importing data from URL
 source("code/Auxiliary Functions/download_google_mobility.R")
 df_mob_report <-
-    download_google_mobility(return_df = TRUE, country = "Brazil") %>%
+    download_google_mobility(return_df = TRUE, save_file = TRUE, output_folder = "input", country = "Brazil") %>%
     filter(is.na(sub_region_2)) %>%
     mutate(
         region = case_when(
@@ -119,7 +119,7 @@ date_last_update <- format(max(df_mob_report$date), "%B %d, %Y")
 
 plot_mobility <- 
     df_mob_report %>% 
-    filter(region == "Brazil") %>% 
+    filter(region == "SP") %>% 
     select(-region) %>% 
     pivot_longer(-date, names_to = "type", values_to = "change") %>%
     group_by(type) %>%
@@ -145,7 +145,7 @@ plot_mobility <-
     facet_wrap(. ~ type, ncol = 2) +
     labs(
         x = "",
-        y = "Change from daily weekday baseline (Jan-Feb 2020)",
+        y = "Change from daily weekday baseline (Jan-Feb 2020) ",
         title = "Daily average change in mobility (7-day Moving average)",
         subtitle = paste0("Source: Google COVID-19 Community Mobility Reports (google.com/covid19/mobility/)\n",
                           "Last update: " , date_last_update, " | ",
@@ -157,7 +157,7 @@ plot_mobility <-
     )
 
 
-ggsave(paste0("output/_plot_google_mobility_MM7", as.Date(date_modified),".png"),
+ggsave(paste0("output/plot_google_mobility_MM7_", as.Date(date_modified),".png"),
        plot = plot_mobility, width = 8, height = 8,
        unit = "in", dpi = 800)
 

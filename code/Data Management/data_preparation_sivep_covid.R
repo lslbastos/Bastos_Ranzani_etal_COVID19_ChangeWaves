@@ -17,7 +17,7 @@ library(tidyverse)
 # library(tidylog)
 
 ## Import SIVEP-Gripe files from 2020 and 2021
-release_date <- "2021-05-17"
+release_date <- "2021-05-24"
 
 
 # Downloading from URL

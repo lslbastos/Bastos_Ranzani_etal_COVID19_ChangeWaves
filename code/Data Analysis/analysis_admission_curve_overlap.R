@@ -18,7 +18,7 @@ library(gtsummary)
 library(patchwork)
 
 
-release_date <- "2021-05-17"
+release_date <- "2021-05-24"
 release_file <- paste0("input/srag_adults_covid_hosp_", release_date,".csv.gz")
 
 
@@ -159,7 +159,11 @@ df_period_overlap_age <-
 plot_overlap_age <- 
     df_period_overlap_age %>%
     mutate(
-        period = factor(period, levels = c(2, 1))
+        period = factor(period, levels = c(2, 1)),
+        FAIXA_IDADE_SIMP = factor(FAIXA_IDADE_SIMP, 
+                                  levels = c("<60", ">=60"),
+                                  labels = c("<60 years", "\u2265 60 years"),
+        )
     ) %>% 
     ggplot() +
     geom_ribbon(aes(x = week,

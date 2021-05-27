@@ -17,8 +17,8 @@ library(tidylog)
 library(patchwork)
 
 
-release_date <- "2021-05-17"
-release_file <- paste0("input/srag_adults_covid_hosp_", release_date,".csv.gz")
+release_date <- "2021-05-24"
+release_file <- paste0("data/srag_adults_covid_hosp_", release_date,".csv.gz")
 
 
 #### importing previous cleanned database
@@ -120,7 +120,7 @@ plot_covid_week_ihm_sat <-
                        breaks = c(0, 0.25, 0.5, 0.75)
                        ) +
     scale_x_continuous(breaks = df_epi_weeks_label_IHM$week,
-                       labels = format(df_epi_weeks_label_IHM$week_start, format = "%d/%b/%y")
+                       labels = format(df_epi_weeks_label_IHM$ano_pri_week_IHM, format = "%d/%b/%y")
                        ) + 
     scale_color_manual(name = "Hospital Admissions",
                        values = c("#0099B47F", "#0099B4FF")
@@ -168,7 +168,7 @@ plot_covid_week_ihm_resp_supp <-
                        ) +
     scale_y_continuous(labels = scales::percent_format(), limits = c(0, 1)) +
     scale_x_continuous(breaks = df_epi_weeks_label_IHM$week,
-                       labels = format(df_epi_weeks_label_IHM$week_start, format = "%d/%b/%y")
+                       labels = format(df_epi_weeks_label_IHM$ano_pri_week_IHM, format = "%d/%b/%y")
     ) + 
     geom_vline(data = df_date_ref, aes(xintercept = 43), linetype = "dashed") +
     labs(
@@ -209,7 +209,7 @@ plot_covid_week_ihm_age <-
     mutate(
         FAIXA_IDADE_SIMP = factor(FAIXA_IDADE_SIMP, 
                                   levels = c("<60", ">=60"),
-                                  labels = c("<60 years", ">=60 years"),
+                                  labels = c("<60 years", "\u2265 60 years"),
                                   )
     ) %>% 
     ggplot() +
@@ -224,7 +224,7 @@ plot_covid_week_ihm_age <-
                        ) +
     scale_y_continuous(labels = scales::percent_format(), limits = c(0, 0.8)) +
     scale_x_continuous(breaks = df_epi_weeks_label_IHM$week,
-                       labels = format(df_epi_weeks_label_IHM$week_start, format = "%d/%b/%y")
+                       labels = format(df_epi_weeks_label_IHM$ano_pri_week_IHM, format = "%d/%b/%y")
     ) + 
     geom_vline(data = df_date_ref, aes(xintercept = 43), linetype = "dashed") +
     labs(
@@ -259,10 +259,10 @@ ggsave(paste0("output/fig_plot_comb_IHM_", release_date,".png"),
 
 # Exporting data for shiny app --------------------------------------------
 
-# write_csv(df_covid_ihm_week, "shiny_app_sivep/app_data/df_covid_ihm_week.csv.gz")
-# 
-# write_csv(df_covid_ihm_week_age, "shiny_app_sivep/app_data/df_covid_ihm_week_age.csv.gz")
-# 
+write_csv(df_covid_ihm_week, "shiny_app_sivep/app_data/df_covid_ihm_week.csv.gz")
+
+write_csv(df_covid_ihm_week_age, "shiny_app_sivep/app_data/df_covid_ihm_week_age.csv.gz")
+
 saveRDS(df_covid_ihm_week, "shiny_app_sivep/app_data/df_covid_ihm_week.rds")
 
 saveRDS(df_covid_ihm_week_age, "shiny_app_sivep/app_data/df_covid_ihm_week_age.rds")

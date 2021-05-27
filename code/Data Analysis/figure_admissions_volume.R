@@ -16,8 +16,8 @@ library(tidyverse)
 library(tidylog)
 library(patchwork)
 
-release_date <- "2021-05-17"
-release_file <- paste0("input/srag_adults_covid_hosp_", release_date,".csv.gz")
+release_date <- "2021-05-24"
+release_file <- paste0("data/srag_adults_covid_hosp_", release_date,".csv.gz")
 
 #### importing previous cleaned database
 srag_adults_covid <-
@@ -116,7 +116,7 @@ df_plot_label_ref <-
 df_epi_weeks_label <-
     df_covid_data_week_all %>% 
     distinct(week, ano_pri_week, week_start) %>% 
-    filter(week %in% c(seq(13, 13*5, 13))) %>% 
+    filter(week %in% c(seq(13, 13*6, 13))) %>% 
     arrange(week)
 
 
@@ -144,7 +144,7 @@ plot_covid_week_notif_sat <-
                        # breaks = seq(0, 45000, 5000)
                        ) +
     scale_x_continuous(breaks = df_epi_weeks_label$week,
-                       labels = format(df_epi_weeks_label$week_start, format = "%d/%b/%y")
+                       labels = format(df_epi_weeks_label$ano_pri_week, format = "%d/%b/%y")
     ) + 
     scale_fill_manual(name = "Hospital Admissions",
                       values = rev(c("#0099B47F", "#0099B4FF"))
@@ -197,7 +197,7 @@ plot_covid_week_resp_supp <-
                        # breaks = seq(0, 35000, 5000)
                        ) +
     scale_x_continuous(breaks = df_epi_weeks_label$week,
-                       labels = format(df_epi_weeks_label$week_start, format = "%d/%b/%y")
+                       labels = format(df_epi_weeks_label$ano_pri_week, format = "%d/%b/%y")
                        ) + 
     labs(
         x = "Epidemiological Weeks",
@@ -224,7 +224,7 @@ plot_covid_week_death <-
                        # breaks = seq(0, 16000, 2000),
                        ) +
     scale_x_continuous(breaks = df_epi_weeks_label$week,
-                       labels = format(df_epi_weeks_label$week_start, format = "%d/%b/%y")
+                       labels = format(df_epi_weeks_label$ano_pri_week, format = "%d/%b/%y")
                        ) + 
     scale_fill_manual(name = "In-hospital deaths",
                       labels = c(""),
@@ -292,8 +292,8 @@ plot_covid_week_age <-
         FAIXA_IDADE_SIMP = factor(FAIXA_IDADE_SIMP, 
                                   levels = c(">=60",
                                              "<60"),
-                                  labels = c(">=60 years",
-                                             "<60 years")
+                                  labels = c("\u2265 60 years",
+                                             "< 60 years")
                                   )
     ) %>%
     ggplot() +
@@ -306,7 +306,7 @@ plot_covid_week_age <-
                        # breaks = seq(0, 45000, 5000)
                        ) +
     scale_x_continuous(breaks = df_epi_weeks_label$week,
-                       labels = format(df_epi_weeks_label$week_start, format = "%d/%b/%y")
+                       labels = format(df_epi_weeks_label$ano_pri_week, format = "%d/%b/%y")
                        ) + 
     scale_fill_manual(name = "Age",
                       values = c("#42B540FF", "#42B5407F")
@@ -333,7 +333,7 @@ plot_comb_week_all <-
               plot_covid_week_death) ) 
 
 
-ggsave(paste0("output/fig1_hosp_week_", release_date,".pdf"),
+ggsave(paste0("output/fig1_hosp_week_", release_date,".png"),
        plot = plot_comb_week_all, width = 13, height = 9,
        unit = "in", dpi = 800)
 
