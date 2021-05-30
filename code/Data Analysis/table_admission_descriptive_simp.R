@@ -29,7 +29,7 @@ paste_iqr <- function(x) {
     }
 
 
-release_date <- "2021-05-17"
+release_date <- "2021-05-24"
 release_file <- paste0("data/srag_adults_covid_hosp_", release_date,".csv.gz")
 
 delay <- 4
@@ -57,11 +57,11 @@ srag_adults_covid <-
 # E484 dominance: the date/week with prevalence over 50% of samples
 #                 (around December 28 or 29, 2020 - Epi. Week 53/2020)
 
-df_date_ref <- 
-    tibble(
-        week_bp    = c(43, 53),
-        week_label = c("E484 Description", "E484 Domain")
-    )
+# df_date_ref <- 
+#     tibble(
+#         week_bp    = c(43, 53),
+#         week_label = c("E484 Description", "E484 Domain")
+#     )
 
 
 
@@ -77,7 +77,6 @@ ls_labels_all <-
         NU_IDADE_N ~ "Age, median (IQR)",
         age_20_39 ~ "20-39 years, n(%)",
         age_40_59 ~ "40-59 years",
-        # age_less60 ~ "<60 years, n (%)",
         age_high60 ~ ">=60 years",
         
         CS_RACA ~ "Self-reported race, n(%)",
@@ -87,19 +86,10 @@ ls_labels_all <-
         CS_ZONA ~ "Area of residence, n(%)",
         
         SATURACAO_m ~ "Hypoxaemia, n (%)",
-        # age_20_39_sat ~ "Age 20-39 with hipoxaemia",
-        # age_40_59_sat ~ "Age 40-59 60 with hipoxaemia",
-        # age_less60_sat ~ "Age < 60 with hipoxaemia",
-        # age_high60_sat ~ "Age >= 60 with hipoxaemia",
-        
+
         UTI ~ "ICU admission, n (%)", 
-        # prop_icu_20_39 ~ "Age 20-39 admitted to the ICU",
-        # prop_icu_40_59 ~ "Age 40-59 admitted to the ICU",
-        # prop_icu_less60 ~ "Age < 60 admitted to the ICU",
-        # prop_icu_high60 ~ "Age >= 60 admitted to the ICU",
-        # SUPORT_VEN ~ "Respiratory Support, n (%)",
-        
-        prop_niv_imv ~ "Total Respiratory Support, n(%)",
+
+        prop_niv_imv ~ "Respiratory Support, n(%)",
         prop_niv ~ "NIV, n (%)",
         prop_imv ~ "IMV, n (%)",
         prop_imv_in ~ "IMV inside ICU, n(%)",
@@ -117,12 +107,12 @@ ls_labels_all <-
 
 df_covid_all_desc <- 
     srag_adults_covid %>%
-    mutate(
-        period = case_when(
-            SEM_PRI_CONT <= 43 ~ 1,
-            TRUE ~ 2
-            ),
-        ) %>%
+    # mutate(
+    #     period = case_when(
+    #         SEM_PRI_CONT <= 43 ~ 1,
+    #         TRUE ~ 2
+    #         ),
+    #     ) %>%
     mutate(
         total = HOSPITAL == "Yes",
         total_outcome = HOSPITAL == "Yes" & EVOLUCAO %in% c("Death", "Discharge"),
@@ -224,28 +214,19 @@ run_desc_table <- function(df) {
 tb_covid_all <- 
     df_covid_all_desc_filter %>% 
     select(
-        period, 
+        # period, 
         total,
         CS_SEXO,
         NU_IDADE_N,
         age_20_39,
         age_40_59,
-        # age_less60,
         age_high60,
         CS_RACA,
         CS_ESCOL_N,
         IS_CAPITAL,
         CS_ZONA,
         SATURACAO_m,
-        # age_20_39_sat,
-        # age_40_59_sat,
-        # age_less60_sat,
-        # age_high60_sat,
         UTI,
-        # prop_icu_20_39,
-        # prop_icu_40_59,
-        # prop_icu_less60,
-        # prop_icu_high60,
         prop_niv_imv,
         prop_niv,
         prop_imv,
@@ -256,21 +237,21 @@ tb_covid_all <-
         age_20_39_outcome,
         age_40_59_outcome,
         age_high60_outcome,
-        # age_less_60_outcome,
         icu_outcome,
         niv_outcome,
         imv_outcome
     ) %>% 
     tbl_summary(
-        by = "period",
+        # by = "period",
         missing = "no",
         label = ls_labels_all,
         digits = list(
             all_categorical() ~ c(0, 1)
         )
     ) %>% 
-    add_n() %>% 
-    add_overall()
+    add_n() 
+    # %>% 
+    # add_overall()
 
 
 
@@ -279,11 +260,14 @@ tb_overall_desc <-
     tb_covid_all$table_body %>% 
     filter(!(row_type == "missing")) %>% 
     select(-c(var_type)) %>% 
-    mutate(label = ifelse(row_type == "label", paste0(label, " [n = ", n, "]"), label)) %>% 
+    mutate(
+        label = ifelse(row_type == "label", paste0(label, " [n = ", n, "]"), label)
+        # stat_0 = ifelse(variable == "total", str_remove_all(stat_0, "(100.0%)"), stat_0)
+        ) %>% 
     rename("Characteristics" = "label",
-           "Overall" = "stat_0",
-           "Period1" = "stat_1",
-           "Period2" = "stat_2"
+           "Overall" = "stat_0"
+           # "Period1" = "stat_1",
+           # "Period2" = "stat_2"
     ) %>% 
     select(-c(n, row_type, var_label))
 
@@ -298,36 +282,37 @@ tb_overall_desc <-
 
 ## Admissions per week - 1st and 2nd wave
 df_admissions_week_wave <-
-    df_covid_all_desc_filter %>% 
-    bind_rows(
-        df_covid_all_desc %>% 
-            mutate(period = 0)
-    ) %>%
-    group_by(period, ano_pri, SEM_PRI, SEM_PRI_CONT) %>% 
+    df_covid_all_desc_filter %>%
+    mutate(period = 0) %>% 
+    # bind_rows(
+    #     df_covid_all_desc %>%
+    #         mutate(period = 0)
+    # ) %>%
+    group_by(period, ano_pri, SEM_PRI, SEM_PRI_CONT) %>%
     summarise(
         total = n()
-    ) %>% 
-    ungroup() %>% 
-    group_by(period) %>% 
+    ) %>%
+    ungroup() %>%
+    group_by(period) %>%
     summarise(
         median_iqr = paste_iqr(total),
         max_admissions = as.character(max(total))
-    ) %>% 
+    ) %>%
     pivot_longer(-c(period), names_to = "metrics", values_to = "val") %>%
-    pivot_wider(names_from = "period", values_from = "val") %>% 
+    pivot_wider(names_from = "period", values_from = "val") %>%
     rename(
-        Overall = `0`,
-        Period1 = `1`,
-        Period2 = `2` 
-    ) %>% 
-    mutate(
-        diff_wave = case_when(
-            metrics == "max_admissions" ~ round((100 * ((as.numeric(Period2) / as.numeric(Period1)) - 1)), 1),
-            metrics == "median_iqr" ~ round((100 * ((as.numeric(str_extract(Period2, ".*\\s")) / as.numeric(str_extract(Period1, ".*\\s"))) - 1)), 1),
-            TRUE ~ NA_real_
-        )
-    ) %>% 
-    select(metrics, Overall, Period1, Period2, diff_wave)
+        Overall = `0`
+        # Period1 = `1`,
+        # Period2 = `2`
+    ) %>%
+    # mutate(
+    #     diff_wave = case_when(
+    #         metrics == "max_admissions" ~ round((100 * ((as.numeric(Period2) / as.numeric(Period1)) - 1)), 1),
+    #         metrics == "median_iqr" ~ round((100 * ((as.numeric(str_extract(Period2, ".*\\s")) / as.numeric(str_extract(Period1, ".*\\s"))) - 1)), 1),
+    #         TRUE ~ NA_real_
+    #     )
+    # ) %>%
+    select(metrics, Overall)
 
 
 
@@ -337,17 +322,31 @@ df_admissions_week_wave <-
 ## Descriptive Tables with rate ratios
 
 tb_desc_admissions <- 
-    df_admissions_week_wave %>%
-    select(
-        Characteristics = metrics,
-        Overall,
-        Period1,
-        Period2
-    ) %>% 
     bind_rows(
         tb_overall_desc %>% 
-            select(-variable)
+            slice(1),
+        df_admissions_week_wave %>%
+            select(
+                Characteristics = metrics,
+                Overall
+                # Period1,
+                # Period2
+            ), 
+        tb_overall_desc %>% 
+            slice(-1)
     )
+    # df_admissions_week_wave %>%
+    # select(
+    #     Characteristics = metrics,
+    #     Overall
+    #     # Period1,
+    #     # Period2
+    # ) 
+    # %>% 
+    # bind_rows(
+    #     tb_overall_desc %>% 
+    #         select(-variable)
+    # )
 
     return(tb_desc_admissions)
 
@@ -407,31 +406,30 @@ tb_desc_admissions <- bind_rows(
 
 
 
-
-dates_periods <- 
-    df_covid_all_desc %>% 
-    group_by(period) %>% 
-    summarise(
-        date_label = paste0(format(min(date_sint), format = "%d/%b/%Y"), 
-                            " - ", 
-                            format(max(date_sint), format = "%d/%b/%Y")
-                            )
-        )
-
+# 
+# dates_periods <- 
+#     df_covid_all_desc %>% 
+#     group_by(period) %>% 
+#     summarise(
+#         date_label = paste0(format(min(date_sint), format = "%d/%b/%Y"), 
+#                             " - ", 
+#                             format(max(date_sint), format = "%d/%b/%Y")
+#                             )
+#         )
+# 
 
 
 write_csv(tb_desc_admissions %>% 
             select(
-                REGIAO, Characteristics, Overall, Period1, Period2
+                REGIAO, Characteristics, Overall
                 # Period2, Period2.1, Period2.2
             ) %>% 
-            set_names(
-                c("REGIAO", "Characteristics", "Overall", 
-                  as.character(dates_periods[1, 2]), as.character(dates_periods[2, 2])
-                )
-            ) %>% 
+            # set_names(
+            #     c("REGIAO", "Characteristics", "Overall", 
+            #       as.character(dates_periods[1, 2]), as.character(dates_periods[2, 2])
+            #     )
+            # ) %>% 
             mutate(
-                
                 Characteristics = case_when(
                     Characteristics == "median_iqr" ~ "Admissions per week, median (IQR)",
                     Characteristics == "max_admissions" ~ "Highest number of admissions in a week",
@@ -441,23 +439,45 @@ write_csv(tb_desc_admissions %>%
         , "shiny_app_sivep/app_data/tb_descriptive_waves.csv.gz")
 
 
-saveRDS(tb_desc_admissions %>% 
+
+
+write_csv(tb_desc_admissions %>% 
               select(
-                  REGIAO, Characteristics, Overall, Period1, Period2
+                  REGIAO, Characteristics, Overall
                   # Period2, Period2.1, Period2.2
               ) %>% 
-            set_names(
-                c("REGIAO", "Characteristics", "Overall", 
-                  as.character(dates_periods[1, 2]), as.character(dates_periods[2, 2])
+              # set_names(
+              #     c("REGIAO", "Characteristics", "Overall", 
+              #       as.character(dates_periods[1, 2]), as.character(dates_periods[2, 2])
+              #     )
+              # ) %>% 
+              mutate(
+                  Characteristics = case_when(
+                      Characteristics == "median_iqr" ~ "Admissions per week, median (IQR)",
+                      Characteristics == "max_admissions" ~ "Highest number of admissions in a week",
+                      TRUE ~ Characteristics
                   )
-            ) %>% 
-            mutate(
-                
-                Characteristics = case_when(
-                    Characteristics == "median_iqr" ~ "Admissions per week, median (IQR)",
-                    Characteristics == "max_admissions" ~ "Highest number of admissions in a week",
-                    TRUE ~ Characteristics
-                )
-            )
-        , "shiny_app_sivep/app_data/tb_descriptive_waves.rds")
+              )
+          , "input/app_data/tb_descriptive_waves.csv.gz")
 
+# 
+# saveRDS(tb_desc_admissions %>% 
+#               select(
+#                   REGIAO, Characteristics, Overall, Period1, Period2
+#                   # Period2, Period2.1, Period2.2
+#               ) %>% 
+#             set_names(
+#                 c("REGIAO", "Characteristics", "Overall", 
+#                   as.character(dates_periods[1, 2]), as.character(dates_periods[2, 2])
+#                   )
+#             ) %>% 
+#             mutate(
+#                 
+#                 Characteristics = case_when(
+#                     Characteristics == "median_iqr" ~ "Admissions per week, median (IQR)",
+#                     Characteristics == "max_admissions" ~ "Highest number of admissions in a week",
+#                     TRUE ~ Characteristics
+#                 )
+#             )
+#         , "shiny_app_sivep/app_data/tb_descriptive_waves.rds")
+# 

@@ -349,17 +349,46 @@ ggsave(paste0("output/fig1_hosp_week_", release_date,".tiff"),compression = "lzw
 
 # Exporting data for shiny app --------------------------------------------
 
-# write_csv(df_covid_data_week_all, "shiny_app_sivep/app_data/df_covid_data_week_all.csv.gz")
+write_csv(df_covid_data_week_all, "shiny_app_sivep/app_data/df_covid_data_week_all.csv.gz")
+
+write_csv(df_covid_data_week_age, "shiny_app_sivep/app_data/df_covid_data_week_age.csv.gz")
+
+# saveRDS(df_covid_data_week_all, "shiny_app_sivep/app_data/df_covid_data_week_all.rds")
 # 
-# write_csv(df_covid_data_week_age, "shiny_app_sivep/app_data/df_covid_data_week_age.csv.gz")
+# saveRDS(df_covid_data_week_age, "shiny_app_sivep/app_data/df_covid_data_week_age.rds")
+
+write_csv(df_covid_data_week_all, "input/app_data/df_covid_data_week_all.csv.gz")
+
+write_csv(df_covid_data_week_age, "input/app_data/df_covid_data_week_age.csv.gz")
+
+# saveRDS(df_covid_data_week_all, "input/app_data/df_covid_data_week_all.rds")
+# 
+# saveRDS(df_covid_data_week_age, "input/app_data/df_covid_data_week_age.rds")
 
 
-saveRDS(df_covid_data_week_all, "shiny_app_sivep/app_data/df_covid_data_week_all.rds")
 
-saveRDS(df_covid_data_week_age, "shiny_app_sivep/app_data/df_covid_data_week_age.rds")
+# Metadata
+df_metadat_volume <-
+    bind_rows(
+        srag_adults_covid, 
+        srag_adults_covid %>% 
+            mutate(REGIAO = "Brazil"),
+        srag_adults_covid %>% 
+            mutate(REGIAO = SG_UF_INTE)
+    ) %>% 
+    group_by(REGIAO) %>% 
+    summarise(
+        total = n(),
+        total_outcome = sum(EVOLUCAO != "Ongoing"),
+        deaths = sum(EVOLUCAO == "Death"),
+        total_delay = sum(SEM_PRI_ADJ <= (max(SEM_PRI_ADJ) - delay)),
+        death_delay = sum(SEM_PRI_ADJ <= (max(SEM_PRI_ADJ) - delay) & EVOLUCAO == "Death"),
+    ) %>% 
+    mutate(
+        last_notif_update = max(srag_adults_covid$date_not, na.rm = T)
+    )
 
 
+write_csv(df_metadat_volume, "shiny_app_sivep/app_data/df_metadat_volume.csv.gz")
 
-saveRDS(df_covid_data_week_all, "input/app_data/df_covid_data_week_all.rds")
-
-saveRDS(df_covid_data_week_age, "input/app_data/df_covid_data_week_age.rds")
+write_csv(df_metadat_volume, "input/app_data/df_metadat_volume.csv.gz")
