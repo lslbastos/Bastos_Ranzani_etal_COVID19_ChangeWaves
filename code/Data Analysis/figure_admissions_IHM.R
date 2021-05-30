@@ -263,12 +263,17 @@ write_csv(df_covid_ihm_week, "shiny_app_sivep/app_data/df_covid_ihm_week.csv.gz"
 
 write_csv(df_covid_ihm_week_age, "shiny_app_sivep/app_data/df_covid_ihm_week_age.csv.gz")
 
-saveRDS(df_covid_ihm_week, "shiny_app_sivep/app_data/df_covid_ihm_week.rds")
+# saveRDS(df_covid_ihm_week, "shiny_app_sivep/app_data/df_covid_ihm_week.rds")
+# 
+# saveRDS(df_covid_ihm_week_age, "shiny_app_sivep/app_data/df_covid_ihm_week_age.rds")
 
-saveRDS(df_covid_ihm_week_age, "shiny_app_sivep/app_data/df_covid_ihm_week_age.rds")
+write_csv(df_covid_ihm_week, "input/app_data/df_covid_ihm_week.csv.gz")
+
+write_csv(df_covid_ihm_week_age, "input/app_data/df_covid_ihm_week_age.csv.gz")
 
 
-saveRDS(df_covid_ihm_week, "input/app_data/df_covid_ihm_week.rds")
-
-saveRDS(df_covid_ihm_week_age, "input/app_data/df_covid_ihm_week_age.rds")
-
+ 
+# saveRDS(df_covid_ihm_week, "input/app_data/df_covid_ihm_week.rds")
+# 
+# saveRDS(df_covid_ihm_week_age, "input/app_data/df_covid_ihm_week_age.rds")
+# 
