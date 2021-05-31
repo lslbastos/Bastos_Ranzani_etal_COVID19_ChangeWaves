@@ -67,18 +67,41 @@ df_covid_ihm_week <-
         srag_adults_covid %>% 
             mutate(REGIAO = SG_UF_INTE)
     ) %>% 
+    mutate(
+        week_start = case_when(
+            SEM_PRI_ADJ == 12 ~ as.Date("2020-03-15"), ## Adjusting week_start for combined weeks <=12/2020
+            TRUE ~ as.Date(week_start)
+
+        )
+    ) %>%
     group_by(REGIAO, week = SEM_PRI_ADJ, ano_pri_week_IHM, week_start) %>% 
     summarise(
-        ihm = sum(EVOLUCAO == "Death", na.rm = TRUE) / sum(EVOLUCAO %in% c("Death", "Discharge"), na.rm = TRUE),
-        ihm_sat_yes = sum(SATURACAO_m == "Yes" & EVOLUCAO == "Death", na.rm = TRUE) / sum(SATURACAO_m == "Yes" & EVOLUCAO %in% c("Death", "Discharge"), na.rm = TRUE),
-        ihm_niv     = sum(SUPORT_VEN == "Non-invasive" & EVOLUCAO == "Death", na.rm = TRUE) / sum(SUPORT_VEN == "Non-invasive" & EVOLUCAO %in% c("Death", "Discharge"), na.rm = TRUE),
-        ihm_imv     = sum(SUPORT_VEN == "Invasive" & EVOLUCAO == "Death", na.rm = TRUE) / sum(SUPORT_VEN == "Invasive" & EVOLUCAO %in% c("Death", "Discharge"), na.rm = TRUE)
+        total_outcome = sum(EVOLUCAO %in% c("Death", "Discharge"), na.rm = TRUE),
+        deaths = sum(EVOLUCAO == "Death", na.rm = TRUE),
+        # ihm    = sum(EVOLUCAO == "Death", na.rm = TRUE) / sum(EVOLUCAO %in% c("Death", "Discharge"), na.rm = TRUE),
         
+        total_sat_yes  = sum(SATURACAO_m == "Yes" & EVOLUCAO %in% c("Death", "Discharge"), na.rm = TRUE),
+        deaths_sat_yes = sum(SATURACAO_m == "Yes" & EVOLUCAO == "Death", na.rm = TRUE),
+        # ihm_sat_yes    = sum(SATURACAO_m == "Yes" & EVOLUCAO == "Death", na.rm = TRUE) / sum(SATURACAO_m == "Yes" & EVOLUCAO %in% c("Death", "Discharge"), na.rm = TRUE),
+        
+        total_niv  = sum(SUPORT_VEN == "Non-invasive" & EVOLUCAO %in% c("Death", "Discharge"), na.rm = TRUE),
+        deaths_niv = sum(SUPORT_VEN == "Non-invasive" & EVOLUCAO == "Death", na.rm = TRUE),
+        # ihm_niv    = sum(SUPORT_VEN == "Non-invasive" & EVOLUCAO == "Death", na.rm = TRUE) / sum(SUPORT_VEN == "Non-invasive" & EVOLUCAO %in% c("Death", "Discharge"), na.rm = TRUE),
+        
+        total_imv  = sum(SUPORT_VEN == "Invasive" & EVOLUCAO %in% c("Death", "Discharge"), na.rm = TRUE),
+        deaths_imv = sum(SUPORT_VEN == "Invasive" & EVOLUCAO == "Death", na.rm = TRUE),
+        # ihm_imv    = sum(SUPORT_VEN == "Invasive" & EVOLUCAO == "Death", na.rm = TRUE) / sum(SUPORT_VEN == "Invasive" & EVOLUCAO %in% c("Death", "Discharge"), na.rm = TRUE)
     ) %>% 
-    ungroup() %>% 
+    ungroup() %>%
+    mutate(
+        ihm = deaths / total_outcome,
+        ihm_sat_yes = deaths_sat_yes / total_sat_yes,
+        ihm_niv = deaths_niv / total_niv,
+        ihm_imv = deaths_imv / total_imv
+    ) %>% 
     replace_na(list(ihm = 0, ihm_sat_yes = 0, ihm_niv = 0, ihm_imv = 0)) %>% 
     group_by(REGIAO, week) %>% 
-    slice(2:n()) %>% 
+    # slice(2:n()) %>% 
     ungroup()
 
 
@@ -194,12 +217,23 @@ df_covid_ihm_week_age <-
         srag_adults_covid %>% 
             mutate(REGIAO = SG_UF_INTE)
     ) %>% 
-    group_by(REGIAO, FAIXA_IDADE_SIMP, week = SEM_PRI_ADJ, week_start) %>% 
+    mutate(
+        week_start = case_when(
+            SEM_PRI_ADJ == 12 ~ as.Date("2020-03-15"), ## Adjusting week_start for combined weeks <=12/2020
+            TRUE ~ as.Date(week_start)
+            
+        )
+    ) %>%
+    group_by(REGIAO, FAIXA_IDADE_SIMP, week = SEM_PRI_ADJ, ano_pri_week_IHM, week_start) %>% 
     summarise(
-        ihm = sum(EVOLUCAO == "Death", na.rm = TRUE) / sum(EVOLUCAO %in% c("Death", "Discharge"), na.rm = TRUE),
+        total_outcome = sum(EVOLUCAO %in% c("Death", "Discharge"), na.rm = TRUE),
+        deaths = sum(EVOLUCAO == "Death", na.rm = TRUE)
     ) %>%
     ungroup() %>% 
-    replace_na(list(ihm = 0, ihm_sat_yes = 0, ihm_niv = 0, ihm_imv = 0))
+    mutate(
+        ihm = deaths / total_outcome
+    ) %>% 
+    replace_na(list(ihm = 0))
 
 
 # Plot: In-hospital mortality per age group

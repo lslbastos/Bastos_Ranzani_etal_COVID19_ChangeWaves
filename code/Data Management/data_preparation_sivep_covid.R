@@ -397,7 +397,7 @@ srag_adults_covid_final <-
     ) %>% 
     group_by(SEM_PRI_CONT) %>% 
     mutate(
-        week_start = min(date_sint),
+        week_start     = min(date_sint),
         week_end = max(date_sint),
         CO_MU_INTE = as.character(CO_MU_INTE)
     ) %>% 
