@@ -18,7 +18,7 @@ library(tidyverse)
 library(tidylog)
 library(patchwork)
 
-release_date <- "2021-05-24"
+release_date <- "2021-05-31"
 release_file <- paste0("data/srag_adults_covid_hosp_", release_date,".csv.gz")
 
 #### importing previous cleaned database
@@ -335,9 +335,13 @@ plot_comb_week_all <-
               plot_covid_week_death) ) 
 
 
-ggsave(paste0("output/fig1_hosp_week_", release_date,".tiff"),compression = "lzw",
+ggsave(paste0("output/fig1_hosp_week_", release_date,".png"),
        plot = plot_comb_week_all, width = 13, height = 9,
        unit = "in", dpi = 800)
+
+# ggsave(paste0("output/fig1_hosp_week_", release_date,".tiff"),compression = "lzw",
+#        plot = plot_comb_week_all, width = 13, height = 9,
+#        unit = "in", dpi = 800)
 
 
 

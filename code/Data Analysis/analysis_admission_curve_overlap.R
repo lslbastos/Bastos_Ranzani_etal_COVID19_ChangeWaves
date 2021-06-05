@@ -18,7 +18,7 @@ library(gtsummary)
 library(patchwork)
 
 
-release_date <- "2021-05-24"
+release_date <- "2021-05-31"
 release_file <- paste0("input/srag_adults_covid_hosp_", release_date,".csv.gz")
 
 

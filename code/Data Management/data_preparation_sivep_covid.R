@@ -17,7 +17,7 @@ library(tidyverse)
 # library(tidylog)
 
 ## Import SIVEP-Gripe files from 2020 and 2021
-release_date <- "2021-05-24"
+release_date <- "2021-05-31"
 
 
 # Downloading from URL
@@ -421,9 +421,10 @@ rm(srag_adults_covid) # Removes SIVEP with all columns
 
 # write_csv(srag_adults_covid_final, paste0("data/", name_file_output,".csv.gz"))
 
-data.table::fwrite(srag_adults_covid_final, paste0("input/", name_file_output,".csv.gz"))
+data.table::fwrite(srag_adults_covid_final, paste0("data/", name_file_output,".csv.gz"))
 
-saveRDS(srag_adults_covid_final, paste0("input/", name_file_output,".rds"))
+saveRDS(srag_adults_covid_final, paste0("data/", name_file_output,".rds"))
 
 
 # finished
+
