@@ -18,7 +18,7 @@ library(gtsummary)
 library(patchwork)
 
 
-release_date <- "2021-05-31"
+release_date <- "2021-05-24"
 release_file <- paste0("input/srag_adults_covid_hosp_", release_date,".csv.gz")
 
 
@@ -288,7 +288,7 @@ plot_overlap_comb <-
 
 
 
-ggsave(paste0("output/plot_overlap_comb_ribbon_", release_date,".png"),
+ggsave(paste0("output/Correspondence/plot_overlap_comb_ribbon_", release_date,".png"),
        plot = plot_overlap_comb, width = 6, height = 9,
        unit = "in", dpi = 800)
 

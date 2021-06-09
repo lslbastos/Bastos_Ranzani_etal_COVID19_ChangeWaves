@@ -17,7 +17,7 @@ library(tidylog)
 library(patchwork)
 
 
-release_date <- "2021-05-31"
+release_date <- "2021-05-24"
 release_file <- paste0("data/srag_adults_covid_hosp_", release_date,".csv.gz")
 
 
@@ -278,7 +278,7 @@ plot_comb_week_all <-
     (plot_covid_week_ihm_sat / plot_covid_week_ihm_age / plot_covid_week_ihm_resp_supp)
 
 
-ggsave(paste0("output/fig_plot_comb_IHM_", release_date,".png"),
+ggsave(paste0("output/Correspondence/fig_plot_comb_IHM_", release_date,".png"),
        plot = plot_comb_week_all, width = 6, height = 11,
        unit = "in", dpi = 800)
 
@@ -292,22 +292,3 @@ ggsave(paste0("output/fig_plot_comb_IHM_", release_date,".png"),
 
 
 # Exporting data for shiny app --------------------------------------------
-
-write_csv(df_covid_ihm_week, "shiny_app_sivep/app_data/df_covid_ihm_week.csv.gz")
-
-write_csv(df_covid_ihm_week_age, "shiny_app_sivep/app_data/df_covid_ihm_week_age.csv.gz")
-
-# saveRDS(df_covid_ihm_week, "shiny_app_sivep/app_data/df_covid_ihm_week.rds")
-# 
-# saveRDS(df_covid_ihm_week_age, "shiny_app_sivep/app_data/df_covid_ihm_week_age.rds")
-
-write_csv(df_covid_ihm_week, "input/app_data/df_covid_ihm_week.csv.gz")
-
-write_csv(df_covid_ihm_week_age, "input/app_data/df_covid_ihm_week_age.csv.gz")
-
-
- 
-# saveRDS(df_covid_ihm_week, "input/app_data/df_covid_ihm_week.rds")
-# 
-# saveRDS(df_covid_ihm_week_age, "input/app_data/df_covid_ihm_week_age.rds")
-# 

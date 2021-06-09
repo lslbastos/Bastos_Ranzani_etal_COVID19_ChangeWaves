@@ -83,7 +83,7 @@ plot_daily_prev <-
     theme_classic()
 
 
-ggsave(paste0("output/plot_daily_prev_variants_2021-05-26.png"),
+ggsave(paste0("output/Correspondence/plot_daily_prev_variants_2021-05-26.png"),
        plot = plot_daily_prev, width = 7, height = 4,
        unit = "in", dpi = 800)
 

@@ -18,7 +18,7 @@ library(tidyverse)
 library(tidylog)
 library(patchwork)
 
-release_date <- "2021-05-31"
+release_date <- "2021-05-24"
 release_file <- paste0("data/srag_adults_covid_hosp_", release_date,".csv.gz")
 
 #### importing previous cleaned database
@@ -335,7 +335,7 @@ plot_comb_week_all <-
               plot_covid_week_death) ) 
 
 
-ggsave(paste0("output/fig1_hosp_week_", release_date,".png"),
+ggsave(paste0("output/Correspondence/fig1_hosp_week_", release_date,".png"),
        plot = plot_comb_week_all, width = 13, height = 9,
        unit = "in", dpi = 800)
 
@@ -349,50 +349,3 @@ ggsave(paste0("output/fig1_hosp_week_", release_date,".png"),
 # Finished
 
 
-
-
-# Exporting data for shiny app --------------------------------------------
-
-write_csv(df_covid_data_week_all, "shiny_app_sivep/app_data/df_covid_data_week_all.csv.gz")
-
-write_csv(df_covid_data_week_age, "shiny_app_sivep/app_data/df_covid_data_week_age.csv.gz")
-
-# saveRDS(df_covid_data_week_all, "shiny_app_sivep/app_data/df_covid_data_week_all.rds")
-# 
-# saveRDS(df_covid_data_week_age, "shiny_app_sivep/app_data/df_covid_data_week_age.rds")
-
-write_csv(df_covid_data_week_all, "input/app_data/df_covid_data_week_all.csv.gz")
-
-write_csv(df_covid_data_week_age, "input/app_data/df_covid_data_week_age.csv.gz")
-
-# saveRDS(df_covid_data_week_all, "input/app_data/df_covid_data_week_all.rds")
-# 
-# saveRDS(df_covid_data_week_age, "input/app_data/df_covid_data_week_age.rds")
-
-
-
-# Metadata
-df_metadat_volume <-
-    bind_rows(
-        srag_adults_covid, 
-        srag_adults_covid %>% 
-            mutate(REGIAO = "Brazil"),
-        srag_adults_covid %>% 
-            mutate(REGIAO = SG_UF_INTE)
-    ) %>% 
-    group_by(REGIAO) %>% 
-    summarise(
-        total = n(),
-        total_outcome = sum(EVOLUCAO != "Ongoing"),
-        deaths = sum(EVOLUCAO == "Death"),
-        total_delay = sum(SEM_PRI_ADJ <= (max(SEM_PRI_ADJ) - delay)),
-        death_delay = sum(SEM_PRI_ADJ <= (max(SEM_PRI_ADJ) - delay) & EVOLUCAO == "Death"),
-    ) %>% 
-    mutate(
-        last_notif_update = max(srag_adults_covid$date_not, na.rm = T)
-    )
-
-
-write_csv(df_metadat_volume, "shiny_app_sivep/app_data/df_metadat_volume.csv.gz")
-
-write_csv(df_metadat_volume, "input/app_data/df_metadat_volume.csv.gz")

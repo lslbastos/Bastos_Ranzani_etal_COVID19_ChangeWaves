@@ -157,11 +157,8 @@ plot_mobility <-
     )
 
 
-ggsave(paste0("output/plot_google_mobility_MM7_", as.Date(date_modified),".png"),
+ggsave(paste0("output/Correspondence/plot_google_mobility_MM7_", as.Date(date_modified),".png"),
        plot = plot_mobility, width = 8, height = 8,
        unit = "in", dpi = 800)
 
 
-# Exporting processed data
-write_csv(df_mob_report, "output/df_mob_report.csv.gz")
-write_csv(df_mob_report, "input/app_data/df_mob_report.csv.gz")

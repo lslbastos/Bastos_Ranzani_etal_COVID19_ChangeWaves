@@ -401,36 +401,37 @@ paste_iqr <- function(x) {
 
 ## Admissions per week - 1st and 2nd wave
 df_admissions_week_wave <-
-    df_covid_all_desc %>% 
-    group_by(period, ano_pri, SEM_PRI, SEM_PRI_CONT) %>% 
+    df_covid_all_desc %>%
+    group_by(period, ano_pri, SEM_PRI, SEM_PRI_CONT) %>%
     summarise(
         total = n()
-    ) %>% 
-    ungroup() %>% 
-    group_by(period) %>% 
+    ) %>%
+    ungroup() %>%
+    group_by(period) %>%
     summarise(
         median_iqr = paste_iqr(total),
         max_admissions = as.character(max(total))
-    ) %>% 
+    ) %>%
     pivot_longer(-c(period), names_to = "metrics", values_to = "val") %>%
-    pivot_wider(names_from = "period", values_from = "val") %>% 
+    pivot_wider(names_from = "period", values_from = "val") %>%
     rename(
         Period1 = `1`,
-        Period2 = `2` 
-    ) %>% 
-    mutate(
-        diff_wave = case_when(
-            metrics == "max_admissions" ~ round((100 * ((as.numeric(Period2) / as.numeric(Period1)) - 1)), 1),
-            metrics == "median_iqr" ~ round((100 * ((as.numeric(str_extract(Period2, ".*\\s")) / as.numeric(str_extract(Period1, ".*\\s"))) - 1)), 1),
-            TRUE ~ NA_real_
-        )
-    )
+        Period2 = `2`
+    ) 
+    # %>%
+    # mutate(
+    #     diff_wave = case_when(
+    #         metrics == "max_admissions" ~ round((100 * ((as.numeric(Period2) / as.numeric(Period1)) - 1)), 1),
+    #         metrics == "median_iqr" ~ round((100 * ((as.numeric(str_extract(Period2, ".*\\s")) / as.numeric(str_extract(Period1, ".*\\s"))) - 1)), 1),
+    #         TRUE ~ NA_real_
+    #     )
+    # )
 
 
 
 ## Admissions per week - 2nd wave - before and after E484 dominance 
 df_admissions_week_dominance <-
-    df_covid_all_desc %>% 
+    df_covid_all_desc %>%
     filter(
         period != 1
     ) %>%
@@ -440,30 +441,31 @@ df_admissions_week_dominance <-
             SEM_PRI_CONT <= 53 ~ 2,
             TRUE ~ 3
         )
-    ) %>% 
-    group_by(period, ano_pri, SEM_PRI, SEM_PRI_CONT) %>% 
+    ) %>%
+    group_by(period, ano_pri, SEM_PRI, SEM_PRI_CONT) %>%
     summarise(
         total = n()
-    ) %>% 
-    ungroup() %>% 
-    group_by(period) %>% 
+    ) %>%
+    ungroup() %>%
+    group_by(period) %>%
     summarise(
         median_iqr = paste_iqr(total),
         max_admissions = as.character(max(total))
-    ) %>% 
+    ) %>%
     pivot_longer(-period, names_to = "metrics", values_to = "val") %>%
-    pivot_wider(names_from = "period", values_from = "val") %>% 
+    pivot_wider(names_from = "period", values_from = "val") %>%
     rename(
         Period2.1 = `2`,
-        Period2.2 = `3` 
-    ) %>% 
-    mutate(
-        diff_dominance = case_when(
-            metrics == "max_admissions" ~ round((100 * ((as.numeric(Period2.2) / as.numeric(Period2.1)) - 1)), 1),
-            metrics == "median_iqr" ~ round((100 * ((as.numeric(str_extract(Period2.2, ".*\\s")) / as.numeric(str_extract(Period2.1, ".*\\s"))) - 1)), 1),
-            TRUE ~ NA_real_
-        )
+        Period2.2 = `3`
     ) 
+    # %>%
+    # mutate(
+    #     diff_dominance = case_when(
+    #         metrics == "max_admissions" ~ round((100 * ((as.numeric(Period2.2) / as.numeric(Period2.1)) - 1)), 1),
+    #         metrics == "median_iqr" ~ round((100 * ((as.numeric(str_extract(Period2.2, ".*\\s")) / as.numeric(str_extract(Period2.1, ".*\\s"))) - 1)), 1),
+    #         TRUE ~ NA_real_
+    #     )
+    # )
 
 
 
@@ -559,11 +561,12 @@ tb_desc_rr_admissions <-
             ) %>%
             rename(
                 Characteristics = metrics
-            ) %>%
-            mutate(
-                rr_ci_wave = NA,
-                rr_ci_dominance = NA
-            ),
+            ), 
+            # %>%
+            # mutate(
+            #     rr_ci_wave = NA,
+            #     rr_ci_dominance = NA
+            # )
         tb_desc_rr
     ) %>% 
     mutate(
@@ -584,7 +587,7 @@ writexl::write_xlsx(tb_desc_rr_admissions %>%
                             "Second wave" = Period2,
                             "Before E484K mutation dominance" = Period2.1,
                             "After E484K mutation dominance" = Period2.2,
-                        ), paste0("output/tb_desc_rr_", release_date, ".xlsx"))
+                        ), paste0("output/Correspondence/tb_desc_rr_", release_date, ".xlsx"))
 
 
 
