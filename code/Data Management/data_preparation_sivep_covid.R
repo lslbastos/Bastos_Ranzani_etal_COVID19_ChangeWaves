@@ -17,7 +17,7 @@ library(tidyverse)
 # library(tidylog)
 
 ## Import SIVEP-Gripe files from 2020 and 2021
-release_date <- "2021-06-07"
+release_date <- "2021-06-14"
 
 
 # Downloading from URL
@@ -31,9 +31,9 @@ srag <- download_sivep(date = release_date,
     # tibble()
 
 # Reading from disk file
-# release_file <- paste0("data/sivep_raw_", release_date,".csv.gz")
-# srag <- data.table::fread(release_file, na.strings = c("", "NA")) %>% 
-#     tibble()
+release_file <- paste0("data/sivep_raw_", release_date,".csv.gz")
+srag <- data.table::fread(release_file, na.strings = c("", "NA")) %>%
+    tibble()
 
 # srag <- vroom::vroom("data/sivep_raw_2021-05-17.csv.gz",
 #                      col_types = cols(
@@ -167,7 +167,7 @@ columns <- c("FEBRE", "TOSSE", "GARGANTA", "DISPNEIA", "DESC_RESP",
              "SATURACAO", "DIARREIA", "VOMITO", "OUTRO_SIN", "PUERPERA",
              "CARDIOPATI", "HEMATOLOGI", "SIND_DOWN", "HEPATICA", "ASMA",
              "DIABETES", "NEUROLOGIC", "PNEUMOPATI", "IMUNODEPRE",
-             "RENAL", "OBESIDADE", "OUT_MORBI")
+             "RENAL", "OBESIDADE", "OUT_MORBI", "VACINA_COV")
 
 ## other symptoms appeared latter on the database, such as abdomnal cramps, anosmia, etc.
 ## We did not use them, because they were missing for the majority of our analysis period
@@ -340,7 +340,8 @@ srag_adults_covid_final <-
            OBESIDADE_m, OUT_MORBI_m, MORB_DESC,
            HOSPITAL, date_int, CO_MU_INTE, UTI, SUPORT_VEN, RES_AN, RES_IGG, RES_IGM, RES_IGA, AN_SARS2,
            PCR_RESUL, PCR_SARS2, DS_PCR_OUT, CRITERIO, PCR, CLASSI_FIN, EVOLUCAO, date_desf, date_enc, 
-           n_comorb_m, n_comorb_mreal, CONT_COMORB_m, CONT_COMORB_mreal, CO_UNI_NOT, CS_ZONA
+           n_comorb_m, n_comorb_mreal, CONT_COMORB_m, CONT_COMORB_mreal, CO_UNI_NOT, CS_ZONA,
+           VACINA_COV, DOSE_1_COV, DOSE_2_COV, LAB_PR_COV, LOTE_1_COV, LOTE_2_COV, FNT_IN_COV
            ) %>% 
     mutate(
         ano_pri = lubridate::year(date_sint),

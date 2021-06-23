@@ -31,7 +31,13 @@ download_sivep <- function(date, output_folder = here::here(),
     # Downloads SIVEP 2020-2021    
     sivep_raw <- purrr::map_df(
         ls_sivep_urls,
-        ~data.table::fread(., na.strings = c("", "NA", NULL))
+        function(df) {
+            
+            data.table::fread(df, na.strings = c("", "NA", NULL), ) %>% 
+                mutate(
+                    FATOR_RISC = as.character(FATOR_RISC)
+                )
+        }
         # ~vroom::vroom(.,
         #               col_types = vroom::cols(
         #                   .default   = vroom::col_character(),
