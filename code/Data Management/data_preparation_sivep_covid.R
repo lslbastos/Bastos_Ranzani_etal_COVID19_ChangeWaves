@@ -17,7 +17,7 @@ library(tidyverse)
 # library(tidylog)
 
 ## Import SIVEP-Gripe files from 2020 and 2021
-release_date <- "2021-06-14"
+release_date <- "2021-06-21"
 
 
 # Downloading from URL
@@ -31,9 +31,9 @@ srag <- download_sivep(date = release_date,
     # tibble()
 
 # Reading from disk file
-release_file <- paste0("data/sivep_raw_", release_date,".csv.gz")
-srag <- data.table::fread(release_file, na.strings = c("", "NA")) %>%
-    tibble()
+# release_file <- paste0("data/sivep_raw_", release_date,".csv.gz")
+# srag <- data.table::fread(release_file, na.strings = c("", "NA")) %>%
+#     tibble()
 
 # srag <- vroom::vroom("data/sivep_raw_2021-05-17.csv.gz",
 #                      col_types = cols(

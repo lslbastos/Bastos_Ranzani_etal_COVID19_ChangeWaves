@@ -17,7 +17,7 @@ library(tidylog)
 library(patchwork)
 
 
-release_date <- "2021-06-14"
+release_date <- "2021-06-21"
 release_file <- paste0("data/srag_adults_covid_hosp_", release_date,".csv.gz")
 
 
