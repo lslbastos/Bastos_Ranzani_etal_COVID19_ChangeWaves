@@ -424,7 +424,7 @@ rm(srag_adults_covid) # Removes SIVEP with all columns
 
 data.table::fwrite(srag_adults_covid_final, paste0("data/", name_file_output,".csv.gz"))
 
-saveRDS(srag_adults_covid_final, paste0("data/", name_file_output,".rds"))
+# saveRDS(srag_adults_covid_final, paste0("data/", name_file_output,".rds"))
 
 
 # finished
