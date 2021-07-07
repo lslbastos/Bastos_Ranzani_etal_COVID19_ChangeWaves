@@ -29,7 +29,7 @@ paste_iqr <- function(x) {
     }
 
 
-release_date <- "2021-06-28"
+release_date <- "2021-05-07"
 release_file <- paste0("data/srag_adults_covid_hosp_", release_date,".csv.gz")
 
 delay <- 4
