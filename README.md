@@ -6,7 +6,7 @@ Authors: Leonardo S. L. Bastos (lslbastos), Otavio T. Ranzani (oranzani), Thiago
 
 Published at: The Lancet Respiratory Medicine
 
-URL: 
+URL: https://www.thelancet.com/journals/lanres/article/PIIS2213-2600(21)00287-3/fulltext
 
 DOI: https://doi.org/10.1016/S2213-2600(21)00287-3
 
