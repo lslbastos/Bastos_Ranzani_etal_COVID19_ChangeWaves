@@ -19,7 +19,7 @@ library(tidyverse)
 library(tidylog)
 library(patchwork)
 
-release_date <- "2021-07-12"
+release_date <- "2021-07-19"
 release_file <- paste0("data/srag_adults_covid_hosp_", release_date,".csv.gz")
 
 #### importing previous cleaned database
@@ -358,17 +358,9 @@ write_csv(df_covid_data_week_all, "shiny_app_sivep/app_data/df_covid_data_week_a
 
 write_csv(df_covid_data_week_age, "shiny_app_sivep/app_data/df_covid_data_week_age.csv.gz")
 
-# saveRDS(df_covid_data_week_all, "shiny_app_sivep/app_data/df_covid_data_week_all.rds")
-# 
-# saveRDS(df_covid_data_week_age, "shiny_app_sivep/app_data/df_covid_data_week_age.rds")
-
 write_csv(df_covid_data_week_all, "input/app_data/df_covid_data_week_all.csv.gz")
 
 write_csv(df_covid_data_week_age, "input/app_data/df_covid_data_week_age.csv.gz")
-
-# saveRDS(df_covid_data_week_all, "input/app_data/df_covid_data_week_all.rds")
-# 
-# saveRDS(df_covid_data_week_age, "input/app_data/df_covid_data_week_age.rds")
 
 delay <- 4
 
