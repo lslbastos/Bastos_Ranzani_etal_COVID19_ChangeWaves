@@ -296,10 +296,6 @@ df_covid_data_week_age_death <-
             mutate(REGIAO = SG_UF_INTE)
     ) %>% 
     filter(EVOLUCAO == "Death") %>% 
-    group_by(SEM_OBI_CONT) %>% 
-    mutate(
-        week_start_obi = min(date_sint)
-    ) %>% 
     group_by(REGIAO, FAIXA_IDADE_SIMP, week = SEM_OBI_CONT, ano_obi_week, week_start_obi) %>%
     summarise(
         deaths = n(),

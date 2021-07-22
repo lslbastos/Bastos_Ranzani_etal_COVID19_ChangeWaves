@@ -405,7 +405,7 @@ srag_adults_covid_final <-
     ungroup() %>% 
     group_by(SEM_OBI_CONT) %>% 
     mutate(
-        week_start_obi = min(date_desf),
+        week_start_obi = min(date_desf, na.rm = TRUE)
     ) %>% 
     ungroup() %>% 
     
