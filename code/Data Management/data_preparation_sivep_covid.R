@@ -24,7 +24,7 @@ release_date <- "2021-07-19"
 source("code/Auxiliary Functions/download_sivep.R")
 srag <- download_sivep(date = release_date, 
                        return_df = TRUE, 
-                       save_file = TRUE, 
+                       save_file = FALSE, 
                        output_folder = "data"
                        ) 
     # %>% 
@@ -400,9 +400,15 @@ srag_adults_covid_final <-
     mutate(
         week_start = min(date_sint),
         week_end   = max(date_sint),
-        CO_MU_INTE = as.character(CO_MU_INTE)
+        CO_MU_INTE = as.character(CO_MU_INTE),
     ) %>% 
     ungroup() %>% 
+    group_by(SEM_OBI_CONT) %>% 
+    mutate(
+        week_start_obi = min(date_desf),
+    ) %>% 
+    ungroup() %>% 
+    
     left_join(
         read_csv("https://raw.githubusercontent.com/kelvins/Municipios-Brasileiros/main/csv/municipios.csv") %>% 
             mutate(codigo_ibge_6dig = str_sub(codigo_ibge, 1, 6)) %>%

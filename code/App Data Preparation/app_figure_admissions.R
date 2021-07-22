@@ -287,6 +287,27 @@ df_covid_data_week_age <-
     ungroup() 
 
 
+df_covid_data_week_age_death <-  
+    bind_rows(
+        srag_adults_covid, 
+        srag_adults_covid %>% 
+            mutate(REGIAO = "Brazil"),
+        srag_adults_covid %>% 
+            mutate(REGIAO = SG_UF_INTE)
+    ) %>% 
+    filter(EVOLUCAO == "Death") %>% 
+    group_by(SEM_OBI_CONT) %>% 
+    mutate(
+        week_start_obi = min(date_sint)
+    ) %>% 
+    group_by(REGIAO, FAIXA_IDADE_SIMP, week = SEM_OBI_CONT, ano_obi_week, week_start_obi) %>%
+    summarise(
+        deaths = n(),
+    ) %>% 
+    replace_na(list(notif = 0, sat_yes = 0)) %>%
+    ungroup() 
+
+
 # Plot with volume per age
 plot_covid_week_age <-
     df_covid_data_week_age %>%
@@ -361,6 +382,9 @@ write_csv(df_covid_data_week_age, "shiny_app_sivep/app_data/df_covid_data_week_a
 write_csv(df_covid_data_week_all, "input/app_data/df_covid_data_week_all.csv.gz")
 
 write_csv(df_covid_data_week_age, "input/app_data/df_covid_data_week_age.csv.gz")
+
+write_csv(df_covid_data_week_age_death, "input/app_data/df_covid_data_week_age_death.csv.gz")
+
 
 delay <- 4
 
