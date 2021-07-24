@@ -335,9 +335,9 @@ run_app_prop_volume_data <- function(df) {
     
     # Exporting data for shiny app --------------------------------------------
     
-    write_csv(df_covid_data_week_all, here::here("shiny_app_sivep", "app_data", "df_covid_data_week_all.csv.gz"))
-    
-    write_csv(df_covid_data_week_age, here::here("shiny_app_sivep", "app_data", "df_covid_data_week_age.csv.gz"))
+    # write_csv(df_covid_data_week_all, here::here("shiny_app_sivep", "app_data", "df_covid_data_week_all.csv.gz"))
+    # 
+    # write_csv(df_covid_data_week_age, here::here("shiny_app_sivep", "app_data", "df_covid_data_week_age.csv.gz"))
     
     write_csv(df_covid_data_week_all, here::here("input", "app_data", "df_covid_data_week_all.csv.gz"))
     
