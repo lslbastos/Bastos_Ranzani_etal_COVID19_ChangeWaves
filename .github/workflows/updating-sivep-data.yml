@@ -15,11 +15,11 @@ jobs:
           #r-version: '4.1.0' # The R version to download (if necessary) and use.
       - run: Rscript -e 'print(paste0("Updating data at", as.Date(Sys.time())))'
       - name: Install packages
-        run: Rscript -e 'install.packages(c("tidyverse", "zoo", "here", "data.table"))'
+        run: Rscript -e 'install.packages(c("tidyverse", "zoo", "here", "data.table", "httr"))'
       - name: Run script 
         run: Rscript -e 'source(here::here("code", "App Data Preparation Functions", "app_update_sivep.R"))'
       - name: Commit results
         run:  |
           git add .
-          git commit -m 'updating sivep data' || echo "No changes to commit"
+          git commit -m "updating sivep data `date +'%Y-%m-%d %H:%M:%S'`" || echo "No changes to commit"
           git push origin || echo "No changes to commit"
