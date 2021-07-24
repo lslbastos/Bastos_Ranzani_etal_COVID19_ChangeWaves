@@ -370,7 +370,7 @@ run_app_prop_volume_data <- function(df) {
         )
     
     
-    write_csv(df_metadat_volume, here::here("shiny_app_sivep", "app_data", "df_metadat_volume.csv.gz"))
+    # write_csv(df_metadat_volume, here::here("shiny_app_sivep", "app_data", "df_metadat_volume.csv.gz"))
     
     write_csv(df_metadat_volume, here::here("input", "app_data", "df_metadat_volume.csv.gz"))
     
