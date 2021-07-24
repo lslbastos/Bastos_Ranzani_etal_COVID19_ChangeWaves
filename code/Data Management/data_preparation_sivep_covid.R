@@ -26,9 +26,9 @@ srag <- download_sivep(date = release_date,
                        return_df = TRUE, 
                        save_file = FALSE, 
                        output_folder = "data"
-                       ) 
-    # %>% 
-    # tibble()
+) 
+# %>% 
+# tibble()
 
 # Reading from disk file
 # release_file <- paste0("data/sivep_raw_", release_date,".csv.gz")
@@ -136,30 +136,30 @@ srag_adults_covid <-
             # DT_INTERNA == "31/10/7202" ~ "31/07/2020", # typo
             # date_int > end_date & lubridate::year(date_int)  > lubridate::year(end_date)  ~ paste0(str_sub(DT_INTERNA,1, 6), "2020"),
             TRUE ~ as.character(DT_INTERNA)), format = "%d/%m/%Y")
-        ) 
-    # %>% 
-    # mutate(
-    #     date_not = as.Date(case_when(
-    #         date_not > end_date & lubridate::year(date_not) > lubridate::year(end_date) ~ paste0(str_sub(DT_NOTIFIC,1, 6), "2020"),
-    #         TRUE ~ as.character(DT_NOTIFIC)), format = "%d/%m/%Y")
-    #     ) %>% 
-    # mutate(
-    #     date_sint = as.Date(case_when(
-    #         date_sint > end_date & lubridate::year(date_sint) > lubridate::year(end_date) ~ paste0(str_sub(DT_SIN_PRI,1, 6), "2020"),
-    #         TRUE ~ as.character(DT_SIN_PRI)), format = "%d/%m/%Y")
-    #     ) 
-    # mutate(date_enc = as.Date(case_when(
-    #     date_enc > end_date & lubridate::year(date_enc) > lubridate::year(end_date) ~ paste0(str_sub(DT_ENCERRA,1, 6), "2020"),
-    #     TRUE ~ as.character(DT_ENCERRA)), format = "%d/%m/%Y")) %>% 
-    # mutate(date_uti = as.Date(case_when(
-    #     date_uti > end_date & lubridate::year(date_uti) > lubridate::year(end_date) ~ paste0(str_sub(DT_ENTUTI,1, 6), "2020"),
-    #     TRUE ~ as.character(DT_ENTUTI)), format = "%d/%m/%Y")) %>% 
-    # mutate(date_said_uti = as.Date(case_when(
-    #     date_said_uti > end_date & lubridate::year(date_said_uti) > lubridate::year(end_date) ~ paste0(str_sub(DT_SAIDUTI,1, 6), "2020"),
-    #     TRUE ~ as.character(DT_SAIDUTI)), format = "%d/%m/%Y")) %>% 
-    # mutate(date_pcr = as.Date(case_when(
-    #     date_pcr > end_date & lubridate::year(date_pcr) > lubridate::year(end_date) ~ paste0(str_sub(DT_PCR,1, 6), "2020"),
-    #     TRUE ~ as.character(DT_PCR)), format = "%d/%m/%Y"))
+    ) 
+# %>% 
+# mutate(
+#     date_not = as.Date(case_when(
+#         date_not > end_date & lubridate::year(date_not) > lubridate::year(end_date) ~ paste0(str_sub(DT_NOTIFIC,1, 6), "2020"),
+#         TRUE ~ as.character(DT_NOTIFIC)), format = "%d/%m/%Y")
+#     ) %>% 
+# mutate(
+#     date_sint = as.Date(case_when(
+#         date_sint > end_date & lubridate::year(date_sint) > lubridate::year(end_date) ~ paste0(str_sub(DT_SIN_PRI,1, 6), "2020"),
+#         TRUE ~ as.character(DT_SIN_PRI)), format = "%d/%m/%Y")
+#     ) 
+# mutate(date_enc = as.Date(case_when(
+#     date_enc > end_date & lubridate::year(date_enc) > lubridate::year(end_date) ~ paste0(str_sub(DT_ENCERRA,1, 6), "2020"),
+#     TRUE ~ as.character(DT_ENCERRA)), format = "%d/%m/%Y")) %>% 
+# mutate(date_uti = as.Date(case_when(
+#     date_uti > end_date & lubridate::year(date_uti) > lubridate::year(end_date) ~ paste0(str_sub(DT_ENTUTI,1, 6), "2020"),
+#     TRUE ~ as.character(DT_ENTUTI)), format = "%d/%m/%Y")) %>% 
+# mutate(date_said_uti = as.Date(case_when(
+#     date_said_uti > end_date & lubridate::year(date_said_uti) > lubridate::year(end_date) ~ paste0(str_sub(DT_SAIDUTI,1, 6), "2020"),
+#     TRUE ~ as.character(DT_SAIDUTI)), format = "%d/%m/%Y")) %>% 
+# mutate(date_pcr = as.Date(case_when(
+#     date_pcr > end_date & lubridate::year(date_pcr) > lubridate::year(end_date) ~ paste0(str_sub(DT_PCR,1, 6), "2020"),
+#     TRUE ~ as.character(DT_PCR)), format = "%d/%m/%Y"))
 
 ## Columns with same options, Yes, No, Ignored, NA
 
@@ -179,48 +179,48 @@ srag_adults_covid <-
     srag_adults_covid %>%
     mutate(CS_SEXO = case_when(CS_SEXO == "M" ~ "Male",
                                CS_SEXO == "F" ~ "Female")
-           ) %>% 
+    ) %>% 
     mutate(FAIXA_IDADE = case_when(NU_IDADE_N <= 39 ~ "20-39",
                                    NU_IDADE_N <= 49 ~ "40-49",
                                    NU_IDADE_N <= 59 ~ "50-59",
                                    NU_IDADE_N <= 69 ~ "60-69",
                                    NU_IDADE_N <= 79 ~ "70-79",
                                    TRUE ~ "80+")
-           ) %>%
+    ) %>%
     mutate(FAIXA_IDADE_SIMP = case_when(NU_IDADE_N <= 39 ~ "20-39",
                                         NU_IDADE_N <= 59 ~ "40-59",
                                         TRUE ~ "60+")
-           ) %>% 
+    ) %>% 
     mutate(CS_RACA = case_when(CS_RACA == "1" ~ "White",
                                CS_RACA == "2" ~ "Black/Brown",
                                CS_RACA == "3" ~ "Asian",
                                CS_RACA == "4" ~ "Black/Brown",
                                CS_RACA == "5" ~ "Indigenous")
-           ) %>% 
+    ) %>% 
     mutate(CS_ESCOL_N = case_when(CS_ESCOL_N == "0" ~ "Illiterate",   # Not applicable not present in this filtered adults dataset
                                   CS_ESCOL_N == "1" ~ "Up to high school",
                                   CS_ESCOL_N == "2" ~ "Up to high school",
                                   CS_ESCOL_N == "3" ~ "High school",
                                   CS_ESCOL_N == "4" ~ "College/University")
-           ) %>% 
+    ) %>% 
     mutate(REGIAO = case_when(SG_UF_INTE %in% c("SP", "RJ", "ES", "MG") ~ "Southeast",
                               SG_UF_INTE %in% c("SC", "RS", "PR") ~ "South",
                               SG_UF_INTE %in% c("MT", "MS", "GO", "DF") ~ "Central-West",
                               SG_UF_INTE %in% c("AM", "AP", "TO", "PA", "RO", "RR", "AC") ~ "North",
                               SG_UF_INTE %in% c("BA", "AL", "SE", "PE", "MA", "RN", "PB", "CE", "PI") ~ "Northeast")
-           ) %>% 
+    ) %>% 
     mutate(EVOLUCAO = case_when(EVOLUCAO == 1 ~ "Discharge",
                                 EVOLUCAO == 2 ~ "Death",
                                 EVOLUCAO == 3 ~ "Death",
                                 TRUE ~ "Ongoing")
-           ) %>%
+    ) %>%
     mutate(SUPORT_VEN = case_when(SUPORT_VEN == 1 ~ "Invasive",
                                   SUPORT_VEN == 2 ~ "Non-invasive",
                                   SUPORT_VEN == 3 ~ "None")
-           ) %>% 
+    ) %>% 
     mutate(UTI = case_when(UTI == 1 ~ "Yes",
                            UTI == 2 ~ "No")
-           ) %>%
+    ) %>%
     mutate(
         HOSPITAL = case_when(
             HOSPITAL == 1 ~ "Yes",
@@ -244,11 +244,11 @@ srag_adults_covid <-
         SRAG_sfebre_total = case_when(
             (!is.na(TOSSE) | !is.na(GARGANTA)) &
                 (!is.na(DESC_RESP) | !is.na(DISPNEIA) | !is.na(SATURACAO)) ~ "Not missing")
-        ) %>% 
+    ) %>% 
     mutate(
         SRAG_original = ifelse((is.na(SRAG_original) & SRAG_original_total == "Not missing"),  "No", SRAG_original),
         SRAG_sfebre   = ifelse((is.na(SRAG_sfebre)  & SRAG_sfebre_total == "Not missing"),  "No", SRAG_sfebre)
-        ) %>% 
+    ) %>% 
     select(-c(SRAG_original_total, SRAG_sfebre_total))
 
 
@@ -320,7 +320,7 @@ srag_adults_covid <-
             CS_ZONA == 3 ~ "Peri-urban"
         )
     )
-    
+
 
 
 rm(db_temp) ## Removing temporary database for comorbidity prep
@@ -342,7 +342,7 @@ srag_adults_covid_final <-
            PCR_RESUL, PCR_SARS2, DS_PCR_OUT, CRITERIO, PCR, CLASSI_FIN, EVOLUCAO, date_desf, date_enc, 
            n_comorb_m, n_comorb_mreal, CONT_COMORB_m, CONT_COMORB_mreal, CO_UNI_NOT, CS_ZONA,
            VACINA_COV, DOSE_1_COV, DOSE_2_COV, LAB_PR_COV, LOTE_1_COV, LOTE_2_COV, FNT_IN_COV
-           ) %>% 
+    ) %>% 
     mutate(
         ano_pri = lubridate::year(date_sint),
         ano_obi = lubridate::year(date_desf),
@@ -417,7 +417,7 @@ srag_adults_covid_final <-
     ) %>% 
     mutate(
         IS_CAPITAL = ifelse(capital == 1, "Yes", "No")
-        )
+    )
 
 
 
@@ -434,4 +434,3 @@ data.table::fwrite(srag_adults_covid_final, paste0("data/", name_file_output,".c
 
 
 # finished
-
