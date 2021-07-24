@@ -9,7 +9,7 @@ library(tidyverse)
 source("code/Auxiliary Functions/download_sivep.R")
 
 
-
+release_date <- as.Date(Sys.time())
 # data update procedure ---------------------------------------------------
 release_date <- "2021-07-19"
 
