@@ -7,14 +7,14 @@
 
 download_sivep <- function(date, output_folder = here::here(),
                            return_df = FALSE, save_file = TRUE) {
-
-    output_file <- paste0(output_folder, "/sivep_raw_", date, ".csv.gz")
+    library(tidyverse)
     
-    if (file.exists(output_file)) {
-        print("File already exists! Overwriting")
-    } else{
-        print("Creating a new file")
-    }
+    
+    # if (file.exists(output_file)) {
+    #     print("File already exists! Overwriting")
+    # } else{
+    #     print("Creating a new file")
+    # }
 
     # SIVEP URLs for 2020 and 2021 files
     sivep_path <- "https://s3-sa-east-1.amazonaws.com/ckan.saude.gov.br/SRAG/"
@@ -26,8 +26,11 @@ download_sivep <- function(date, output_folder = here::here(),
         "SIVEP_2021" = paste0(sivep_path, "2021/INFLUD21-", stringr::str_sub(date, 9, 10),"-", stringr::str_sub(date, 6, 7), "-", stringr::str_sub(date, 1, 4), ".csv")
         )
     
+    
 
-
+    
+    output_file <- paste0(output_folder, "/sivep_raw_", date, ".csv.gz")
+    
     # Downloads SIVEP 2020-2021    
     sivep_raw <- purrr::map_df(
         ls_sivep_urls,
@@ -38,21 +41,13 @@ download_sivep <- function(date, output_folder = here::here(),
                     FATOR_RISC = as.character(FATOR_RISC)
                 )
         }
-        # ~vroom::vroom(.,
-        #               col_types = vroom::cols(
-        #                   .default   = vroom::col_character(),
-        #                   SEM_NOT    = vroom::col_double(),
-        #                   SEM_PRI    = vroom::col_double(),
-        #                   NU_IDADE_N = vroom::col_double(),
-        #                   TP_IDADE   = vroom::col_double()
-        #                   )
-        #               ), delim = ";"
-        ) 
-        # %>% 
-        # purrr::map_df(
-        #     ~tibble::tibble(.)
-        # )
 
+        ) 
+
+    
+    
+    
+    
     if (save_file) {
         # Exports SIVEP in a CSV file
         data.table::fwrite(sivep_raw, paste0(output_file))
