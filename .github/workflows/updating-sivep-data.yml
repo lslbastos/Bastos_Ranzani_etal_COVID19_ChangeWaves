@@ -17,7 +17,7 @@ jobs:
       - name: Install packages
         run: Rscript -e 'install.packages(c("tidyverse", "zoo", "here", "data.table"))'
       - name: Run script 
-        run: Rscript -e 'source(here::here("code", "app_update_sivep.R"))'
+        run: Rscript -e 'source(here::here("code", "App Data Preparation Functions", "app_update_sivep.R"))'
       - name: Commit results
         run:  |
           git add .
