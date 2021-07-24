@@ -1,5 +1,7 @@
 name: updating-sivep-data
 on:
+  push:
+    branches: main
   schedule:
     - cron: "05 22 * * 3"
 
