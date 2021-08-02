@@ -383,7 +383,7 @@ run_app_data_preparation_sivep_covid <- function(df) {
         filter(HOSPITAL == "Yes")
     
 
-    # name_file_output_hosp <- paste0("srag_adults_covid_hosp_", release_date)
+    name_file_output_hosp <- paste0("srag_adults_covid_hosp_", release_date)
     data.table::fwrite(srag_adults_covid_final_hosp, here::here("input", paste0(name_file_output_hosp,".csv.gz")))
     
     print("Data preparation complete!")
