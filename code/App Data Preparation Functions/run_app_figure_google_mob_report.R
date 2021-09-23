@@ -180,6 +180,6 @@ run_app_figure_google_mob_report <- function() {
     # write_csv(df_mob_report, "output/df_mob_report.csv.gz")
     print("Google mobility report processed")
     
-    data.table::fwrite(df_mob_report, here::here("input", "app_data", "df_mob_report.csv.gz"))
+    write_csv(df_mob_report, here::here("input", "app_data", "df_mob_report.csv.gz"))
     
 }
