@@ -47,40 +47,72 @@ run_app_figure_google_mob_report <- function() {
     
     ## Adjusting States
     df_mob_report <- df_mob_report %>% 
-        mutate(region = iconv(region, "UTF-8", "ASCII//TRANSLIT")) %>%
         mutate(
-            region = fct_recode(region,
-                                "DF" = "Federal District",            
-                                "AC" = "State of Acre",               
-                                "AL" = "State of Alagoas",            
-                                "AP" = "State of Amapa",              
-                                "AM" = "State of Amazonas",           
-                                "BA" = "State of Bahia",              
-                                "CE" = "State of Ceara",              
-                                "ES" = "State of Espirito Santo",     
-                                "GO" = "State of Goias",              
-                                "MA" = "State of Maranhao",           
-                                "MT" = "State of Mato Grosso",       
-                                "MS" = "State of Mato Grosso do Sul", 
-                                "MG" = "State of Minas Gerais",       
-                                "PA" = "State of Para",               
-                                "PB" = "State of Paraiba",            
-                                "PR" = "State of Parana",             
-                                "PE" = "State of Pernambuco",         
-                                "PI" = "State of Piaui",              
-                                "RJ" = "State of Rio de Janeiro",     
-                                "RN" = "State of Rio Grande do Norte",
-                                "RS" = "State of Rio Grande do Sul",  
-                                "RO" = "State of Rondonia",           
-                                "RR" = "State of Roraima",            
-                                "SC" = "State of Santa Catarina",     
-                                "SP" = "State of Sao Paulo",          
-                                "SE" = "State of Sergipe",            
-                                "TO" = "State of Tocantins",
-                                )
-            ) %>% 
+            region = case_when(
+                region == "Brazil"            ~ "Brazil",
+                region == "Federal District"  ~ "DF",            
+                region == "State of Acre"     ~ "AC",               
+                region == "State of Alagoas"  ~ "AL",            
+                str_detect(region, "Amap")    ~ "AP",              
+                region == "State of Amazonas" ~ "AM",           
+                region == "State of Bahia"    ~ "BA",              
+                str_detect(region, "Cear")    ~ "CE",              
+                str_detect(region, "Esp")     ~ "ES",     
+                str_detect(region, "Goi")     ~ "GO",              
+                str_detect(region, "Maranh")  ~ "MA",           
+                region == "State of Mato Grosso"        ~ "MT",       
+                region == "State of Mato Grosso do Sul" ~ "MS", 
+                region == "State of Minas Gerais"       ~ "MG",       
+                str_detect(region, regex("Par.$"))    ~ "PA",               
+                str_detect(region, regex("Para.ba$")) ~ "PB",            
+                str_detect(region, "Paran")   ~ "PR",             
+                region == "State of Pernambuco"          ~ "PE",         
+                str_detect(region, "Piau")    ~ "PI",              
+                region == "State of Rio de Janeiro"      ~ "RJ",     
+                region == "State of Rio Grande do Norte" ~ "RN",
+                region == "State of Rio Grande do Sul"   ~ "RS",  
+                str_detect(region, "Rond")    ~ "RO",           
+                region == "State of Roraima"  ~ "RR",            
+                region == "State of Santa Catarina" ~ "SC",     
+                str_detect(region, "Paulo")         ~ "SP",          
+                region == "State of Sergipe"        ~ "SE",            
+                region == "State of Tocantins"      ~ "TO"
+                )
+        ) %>% 
+        # mutate(region = iconv(region, "latin1", "ASCII//TRANSLIT")) %>%
+        # mutate(
+        #     region = fct_recode(region,
+        #                         "DF" = "Federal District",            
+        #                         "AC" = "State of Acre",               
+        #                         "AL" = "State of Alagoas",            
+        #                         "AP" = "State of Amapa",              
+        #                         "AM" = "State of Amazonas",           
+        #                         "BA" = "State of Bahia",              
+        #                         "CE" = "State of Ceara",              
+        #                         "ES" = "State of Espirito Santo",     
+        #                         "GO" = "State of Goias",              
+        #                         "MA" = "State of Maranhao",           
+        #                         "MT" = "State of Mato Grosso",       
+        #                         "MS" = "State of Mato Grosso do Sul", 
+        #                         "MG" = "State of Minas Gerais",       
+        #                         "PA" = "State of Para",               
+        #                         "PB" = "State of Paraiba",            
+        #                         "PR" = "State of Parana",             
+        #                         "PE" = "State of Pernambuco",         
+        #                         "PI" = "State of Piaui",              
+        #                         "RJ" = "State of Rio de Janeiro",     
+        #                         "RN" = "State of Rio Grande do Norte",
+        #                         "RS" = "State of Rio Grande do Sul",  
+        #                         "RO" = "State of Rondonia",           
+        #                         "RR" = "State of Roraima",            
+        #                         "SC" = "State of Santa Catarina",     
+        #                         "SP" = "State of Sao Paulo",          
+        #                         "SE" = "State of Sergipe",            
+        #                         "TO" = "State of Tocantins",
+        #                         )
+        #     ) %>% 
         mutate(
-            region = as.character(region)
+            region = as.character()
         )
     
     
