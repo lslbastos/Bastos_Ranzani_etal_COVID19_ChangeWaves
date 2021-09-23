@@ -377,6 +377,7 @@ run_app_data_preparation_sivep_covid <- function(df) {
         mutate(
             IS_CAPITAL = ifelse(capital == 1, "Yes", "No")
         )
+    
     rm(srag_adults_covid) # Removes SIVEP with all columns
     
     srag_adults_covid_final_hosp <- srag_adults_covid_final %>% 

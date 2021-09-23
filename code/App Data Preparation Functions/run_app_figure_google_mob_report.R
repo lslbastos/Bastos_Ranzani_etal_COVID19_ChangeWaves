@@ -47,7 +47,7 @@ run_app_figure_google_mob_report <- function() {
     
     ## Adjusting States
     df_mob_report <- df_mob_report %>% 
-        mutate(region = iconv(region, "UTF-8", "LATIN1")) %>%
+        # mutate(region = iconv(region, "UTF-8", "ASCII//TRANSLIT")) %>% 
         mutate(
             region = fct_recode(region,
                                 "DF" = "Federal District",            
