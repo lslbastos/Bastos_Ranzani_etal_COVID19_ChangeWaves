@@ -78,7 +78,7 @@ run_app_figure_google_mob_report <- function() {
                 region == "State of Sergipe"        ~ "SE",            
                 region == "State of Tocantins"      ~ "TO"
                 )
-        ) %>% 
+        )
         # mutate(region = iconv(region, "latin1", "ASCII//TRANSLIT")) %>%
         # mutate(
         #     region = fct_recode(region,
@@ -111,9 +111,9 @@ run_app_figure_google_mob_report <- function() {
         #                         "TO" = "State of Tocantins",
         #                         )
         #     ) %>% 
-        mutate(
-            region = as.character()
-        )
+        # mutate(
+        #     region = as.character()
+        # )
     
     
     # Plots: Average daily prevalence of variants/mutation in Time -----------------------------------
