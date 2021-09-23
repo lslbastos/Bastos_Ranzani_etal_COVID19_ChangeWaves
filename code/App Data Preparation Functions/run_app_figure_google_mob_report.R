@@ -78,7 +78,10 @@ run_app_figure_google_mob_report <- function() {
                                 "SE" = "State of Sergipe",            
                                 "TO" = "State of Tocantins",
                                 )
-            )
+            ) %>% 
+        mutate(
+            region = as.character(region)
+        )
     
     
     # Plots: Average daily prevalence of variants/mutation in Time -----------------------------------
@@ -145,6 +148,6 @@ run_app_figure_google_mob_report <- function() {
     # write_csv(df_mob_report, "output/df_mob_report.csv.gz")
     print("Google mobility report processed")
     
-    write_csv(df_mob_report, here::here("input", "app_data", "df_mob_report.csv.gz"))
+    data.table::fwrite(df_mob_report, here::here("input", "app_data", "df_mob_report.csv.gz"))
     
 }
