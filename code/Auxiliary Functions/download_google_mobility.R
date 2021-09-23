@@ -26,15 +26,17 @@ download_google_mobility <- function(country = "Brazil",
     
     if (country == "All") {
         g_mob_raw <- 
-            vroom::vroom(g_mob_path)
+            data.table::fread(g_mob_path, na.strings = c("", "NA"), encoding = "UTF-8") %>% 
+            as_tibble()
         
         
     } else {
         ## Filter data to a specific country
         g_mob_raw <- 
             dplyr::filter(
-                vroom::vroom(g_mob_path),
-                country_region == country
+                data.table::fread(g_mob_path, na.strings = c("", "NA"), encoding = "UTF-8") %>%
+                    as_tibble()
+                    , country_region == country
             )
         
     }
