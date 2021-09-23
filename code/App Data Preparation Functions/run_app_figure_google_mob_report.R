@@ -47,38 +47,38 @@ run_app_figure_google_mob_report <- function() {
     
     ## Adjusting States
     df_mob_report <- df_mob_report %>% 
-        mutate(region = iconv(region, "UTF-8", "ASCII//TRANSLIT")) %>% 
+        mutate(region = iconv(region, "UTF-8", "LATIN1")) %>%
         mutate(
             region = fct_recode(region,
                                 "DF" = "Federal District",            
                                 "AC" = "State of Acre",               
                                 "AL" = "State of Alagoas",            
-                                "AP" = "State of Amapa",              
+                                "AP" = "State of Amapá",              
                                 "AM" = "State of Amazonas",           
                                 "BA" = "State of Bahia",              
-                                "CE" = "State of Ceara",              
-                                "ES" = "State of Espirito Santo",     
-                                "GO" = "State of Goias",              
-                                "MA" = "State of Maranhao",           
+                                "CE" = "State of Ceará",              
+                                "ES" = "State of Espírito Santo",     
+                                "GO" = "State of Goiás",              
+                                "MA" = "State of Maranhão",           
                                 "MT" = "State of Mato Grosso",       
                                 "MS" = "State of Mato Grosso do Sul", 
                                 "MG" = "State of Minas Gerais",       
-                                "PA" = "State of Para",               
-                                "PB" = "State of Paraiba",            
-                                "PR" = "State of Parana",             
+                                "PA" = "State of Pará",               
+                                "PB" = "State of Paraíba",            
+                                "PR" = "State of Paraná",             
                                 "PE" = "State of Pernambuco",         
-                                "PI" = "State of Piaui",              
+                                "PI" = "State of Piauí",              
                                 "RJ" = "State of Rio de Janeiro",     
                                 "RN" = "State of Rio Grande do Norte",
                                 "RS" = "State of Rio Grande do Sul",  
-                                "RO" = "State of Rondonia",           
+                                "RO" = "State of Rondônia",           
                                 "RR" = "State of Roraima",            
                                 "SC" = "State of Santa Catarina",     
-                                "SP" = "State of Sao Paulo",          
+                                "SP" = "State of São Paulo",          
                                 "SE" = "State of Sergipe",            
-                                "TO" = "State of Tocantins", 
+                                "TO" = "State of Tocantins",
+                                )
             )
-        )
     
     
     # Plots: Average daily prevalence of variants/mutation in Time -----------------------------------
