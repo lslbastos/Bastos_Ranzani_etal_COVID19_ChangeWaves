@@ -296,7 +296,7 @@ run_app_data_preparation_sivep_covid <- function(df) {
                NOSOCOMIAL, FEBRE_m, TOSSE_m, GARGANTA_m, DISPNEIA_m, DESC_RESP_m, SATURACAO_m, DIARREIA_m, VOMITO_m, OUTRO_SIN_m,
                OUTRO_DES, DOR_ABD, FADIGA, PERD_OLFT, PERD_PALA, SRAG_original, SRAG_sfebre, PUERPERA_m, FATOR_RISC, 
                CARDIOPATI_m, HEMATOLOGI_m, SIND_DOWN_m, HEPATICA_m,  ASMA_m, DIABETES_m, NEUROLOGIC_m, PNEUMOPATI_m, IMUNODEPRE_m, RENAL_m, 
-               OBESIDADE_m, OUT_MORBI_m, MORB_DESC,
+               OBESIDADE_m, OUT_MORBI_m, MORB_DESC, CO_MUN_RES,
                HOSPITAL, date_int, CO_MU_INTE, UTI, SUPORT_VEN, RES_AN, RES_IGG, RES_IGM, RES_IGA, AN_SARS2,
                PCR_RESUL, PCR_SARS2, DS_PCR_OUT, CRITERIO, PCR, CLASSI_FIN, EVOLUCAO, date_desf, date_enc, 
                n_comorb_m, n_comorb_mreal, CONT_COMORB_m, CONT_COMORB_mreal, CO_UNI_NOT, CS_ZONA,

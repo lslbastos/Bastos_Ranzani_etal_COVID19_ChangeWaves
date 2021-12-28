@@ -82,7 +82,7 @@ check_last_update <- function(release_date) {
                         stringr::str_sub(release_date, 1, 4), ".csv")
     
     
-    if (!httr::http_error(sivep_url)) {
+    if (!httr::http_error(httr::GET(sivep_url))) {
         release_date <- release_date
         
     } else {
