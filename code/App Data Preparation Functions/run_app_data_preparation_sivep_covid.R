@@ -12,6 +12,7 @@ run_app_data_preparation_sivep_covid <- function(df) {
             dt_not = as.Date(DT_NOTIFIC, format = "%d/%m/%Y")
         ) %>% 
         filter(dt_not >= as.Date("2020-02-16")) %>% 
+        # filter(dt_sint >= as.Date("2020-02-16")) %>% 
         mutate(index = 1:n())
     
     
@@ -286,7 +287,7 @@ run_app_data_preparation_sivep_covid <- function(df) {
     
     
     ### Creating week/year reference table (auxiliary table)
-    df_date_weeks_sint <- 
+    df_date_weeks <- 
         tibble(
             dates = seq.Date(as.Date("2019-12-29"),
                              as.Date(release_date), by = "1 day")
@@ -294,19 +295,29 @@ run_app_data_preparation_sivep_covid <- function(df) {
         mutate(
             year_epi = lubridate::epiyear(dates),
             week_epi = lubridate::epiweek(dates)
-        ) %>% 
-        group_by(
-            year_epi, week_epi
-        ) %>% 
-        summarise(
-            week_start = min(dates)
-            # week_end   = max(dates),
-        ) %>% 
-        ungroup() %>% 
-        mutate(
-            ano_week_epi = paste0(week_epi, "/", year_epi),
-            week_epi_cont = 1:n()
         )
+    
+    df_date_weeks_cont <- 
+        df_date_weeks %>% 
+        left_join(
+            df_date_weeks %>% 
+                group_by(
+                    year_epi, week_epi
+                ) %>% 
+                summarise(
+                    week_start = min(dates)
+                    # week_end   = max(dates),
+                ) %>% 
+                ungroup() %>% 
+                mutate(
+                    ano_week_epi = paste0(week_epi, "/", year_epi),
+                    week_epi_cont = 1:n()
+                )
+        ) %>% 
+        ungroup()
+
+    
+
     
     
     
@@ -316,46 +327,59 @@ run_app_data_preparation_sivep_covid <- function(df) {
     ## Filtering columns of interest
     srag_adults_covid_final <- 
         bind_cols(
-            ID = rownames(srag_adults_covid),
+            # ID = rownames(srag_adults_covid),
             srag_adults_covid
         ) %>%
         select(ID, date_not, SEM_NOT, SEM_PRI, date_sint, SG_UF_INTE, REGIAO,
                CS_SEXO, NU_IDADE_N, FAIXA_IDADE, FAIXA_IDADE_SIMP, CS_ESCOL_N, CS_RACA,
                NOSOCOMIAL, FEBRE_m, TOSSE_m, GARGANTA_m, DISPNEIA_m, DESC_RESP_m, SATURACAO_m, DIARREIA_m, VOMITO_m, OUTRO_SIN_m,
-               OUTRO_DES, DOR_ABD, FADIGA, PERD_OLFT, PERD_PALA, SRAG_original, SRAG_sfebre, PUERPERA_m, FATOR_RISC, 
-               CARDIOPATI_m, HEMATOLOGI_m, SIND_DOWN_m, HEPATICA_m,  ASMA_m, DIABETES_m, NEUROLOGIC_m, PNEUMOPATI_m, IMUNODEPRE_m, RENAL_m, 
+               OUTRO_DES, DOR_ABD, FADIGA, PERD_OLFT, PERD_PALA, SRAG_original, SRAG_sfebre, PUERPERA_m, FATOR_RISC,
+               CARDIOPATI_m, HEMATOLOGI_m, SIND_DOWN_m, HEPATICA_m,  ASMA_m, DIABETES_m, NEUROLOGIC_m, PNEUMOPATI_m, IMUNODEPRE_m, RENAL_m,
                OBESIDADE_m, OUT_MORBI_m, MORB_DESC, CO_MUN_RES,
                HOSPITAL, date_int, CO_MU_INTE, UTI, SUPORT_VEN, RES_AN, RES_IGG, RES_IGM, RES_IGA, AN_SARS2,
-               PCR_RESUL, PCR_SARS2, DS_PCR_OUT, CRITERIO, PCR, CLASSI_FIN, EVOLUCAO, date_desf, date_enc, 
+               PCR_RESUL, PCR_SARS2, DS_PCR_OUT, CRITERIO, PCR, CLASSI_FIN, EVOLUCAO, date_desf, date_enc,
                n_comorb_m, n_comorb_mreal, CONT_COMORB_m, CONT_COMORB_mreal, CO_UNI_NOT, CS_ZONA,
                VACINA_COV, DOSE_1_COV, DOSE_2_COV, LAB_PR_COV, LOTE_1_COV, LOTE_2_COV, FNT_IN_COV
-        ) %>% 
+        ) %>%
         mutate(
             ano_pri = lubridate::epiyear(date_sint),
             ano_obi = lubridate::epiyear(date_desf),
-            SEM_OBI = lubridate::epiweek(date_desf)
+            SEM_OBI = lubridate::epiweek(date_desf),
+            date_sint = as.Date(date_sint),
+            date_desf = as.Date(date_desf)
         ) %>%
-        
+
         # Onset of symptoms (adjusting weeks for plotting)
         left_join(
-            df_date_weeks_sint %>% 
-                select(year_epi, week_epi, 
-                       week_start, 
-                       SEM_PRI_CONT = week_epi_cont, 
+            df_date_weeks_cont %>%
+                select(dates,
+                       year_epi,
+                       week_epi,
+                       week_start,
+                       SEM_PRI_CONT = week_epi_cont,
                        ano_pri_week = ano_week_epi)
-            , by = c("ano_pri" = "year_epi",
+            , by = c("date_sint" = "dates",
+                     "ano_pri" = "year_epi",
                      "SEM_PRI" = "week_epi")
-        ) %>% 
+        ) %>%
         # Date of outcome (Death) -weeks
         left_join(
-            df_date_weeks_sint %>% 
-                select(year_epi, 
-                       week_epi, 
-                       week_start_obi = week_start, 
-                       SEM_OBI_CONT = week_epi_cont, 
+            df_date_weeks_cont %>%
+                select(dates,
+                       year_epi,
+                       week_epi,
+                       week_start_obi = week_start,
+                       SEM_OBI_CONT = week_epi_cont,
                        ano_obi_week = ano_week_epi)
-            , by = c("ano_obi" = "year_epi",
+            , by = c("date_desf" = "dates",
+                     "ano_obi" = "year_epi",
                      "SEM_OBI" = "week_epi")
+        ) %>%
+        mutate(
+            SEM_PRI = case_when(
+                ano_pri == 2020 & SEM_PRI <= 8 ~ 8,
+                TRUE ~ SEM_PRI
+            )
         ) %>% 
         # Adjusting initial weeks for better IHM estimate in plots
         mutate(

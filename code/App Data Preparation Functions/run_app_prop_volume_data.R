@@ -243,7 +243,8 @@ run_app_prop_volume_data <- function(df) {
             srag_adults_covid %>% 
                 mutate(REGIAO = SG_UF_INTE)
         ) %>% 
-        group_by(REGIAO, FAIXA_IDADE_SIMP, week = SEM_PRI_CONT, ano_pri_week, week_start) %>%
+        group_by(REGIAO, FAIXA_IDADE_SIMP, 
+                 week = SEM_PRI_CONT, ano_pri_week, week_start) %>%
         summarise(
             notif = n(),
         ) %>% 
@@ -260,7 +261,8 @@ run_app_prop_volume_data <- function(df) {
                 mutate(REGIAO = SG_UF_INTE)
         ) %>% 
         filter(EVOLUCAO == "Death") %>% 
-        group_by(REGIAO, FAIXA_IDADE_SIMP, week = SEM_OBI_CONT, ano_obi_week, week_start_obi) %>%
+        group_by(REGIAO, FAIXA_IDADE_SIMP, week = SEM_OBI_CONT, 
+                 ano_obi_week, week_start_obi) %>%
         summarise(
             deaths = n(),
         ) %>% 
