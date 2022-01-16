@@ -317,13 +317,6 @@ run_app_data_preparation_sivep_covid <- function(df) {
         ungroup()
 
     
-
-    
-    
-    
-    
-    
-    
     ## Filtering columns of interest
     srag_adults_covid_final <- 
         bind_cols(
