@@ -2,7 +2,11 @@ run_app_prop_volume_data <- function(df) {
     library(tidyverse)
 
     #### importing previous cleaned database
-    srag_adults_covid <- df
+    srag_adults_covid <- df %>% 
+        mutate(
+            FAIXA_IDADE_SIMP = case_when(NU_IDADE_N <= 59 ~ "<60",
+                                         TRUE ~ ">=60")
+        )
     
     
     # Volume per Epidemiological Weeks ----------------------------------------

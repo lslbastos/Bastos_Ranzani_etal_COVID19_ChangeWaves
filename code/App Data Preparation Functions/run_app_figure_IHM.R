@@ -3,7 +3,11 @@ run_app_figure_IHM <- function(df) {
     library(tidyverse)
     
     #### importing previous cleanned database
-    srag_adults_covid <- df
+    srag_adults_covid <- df %>% 
+        mutate(
+            FAIXA_IDADE_SIMP = case_when(NU_IDADE_N <= 59 ~ "<60",
+                                         TRUE ~ ">=60")
+        )
     
     
     # ### Reference dates from E484 mutation (outbreak.info)

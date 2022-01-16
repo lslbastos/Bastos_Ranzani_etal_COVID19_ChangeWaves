@@ -150,7 +150,7 @@ run_app_data_preparation_sivep_covid <- function(df) {
         mutate(FAIXA_IDADE_SIMP = case_when(NU_IDADE_N <= 39 ~ "20-39",
                                             NU_IDADE_N <= 59 ~ "40-59",
                                             TRUE ~ "60+")
-        ) %>% 
+        ) %>%
         mutate(CS_RACA = case_when(CS_RACA == "1" ~ "White",
                                    CS_RACA == "2" ~ "Black/Brown",
                                    CS_RACA == "3" ~ "Asian",
