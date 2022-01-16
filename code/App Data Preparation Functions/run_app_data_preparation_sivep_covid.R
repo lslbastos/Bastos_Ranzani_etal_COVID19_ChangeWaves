@@ -320,7 +320,7 @@ run_app_data_preparation_sivep_covid <- function(df) {
     ## Filtering columns of interest
     srag_adults_covid_final <- 
         bind_cols(
-            # ID = rownames(srag_adults_covid),
+            ID = rownames(srag_adults_covid),
             srag_adults_covid
         ) %>%
         select(ID, date_not, SEM_NOT, SEM_PRI, date_sint, SG_UF_INTE, REGIAO,
