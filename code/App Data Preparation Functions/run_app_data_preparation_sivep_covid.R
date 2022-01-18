@@ -163,13 +163,13 @@ run_app_data_preparation_sivep_covid <- function(df) {
                                       CS_ESCOL_N == "3" ~ "High school",
                                       CS_ESCOL_N == "4" ~ "College/University")
         ) %>% 
-        mutate(REGIAO_INTE = case_when(SG_UF_INTE %in% c("SP", "RJ", "ES", "MG") ~ "Southeast",
+        mutate(REGIAO = case_when(SG_UF_INTE %in% c("SP", "RJ", "ES", "MG") ~ "Southeast",
                                   SG_UF_INTE %in% c("SC", "RS", "PR") ~ "South",
                                   SG_UF_INTE %in% c("MT", "MS", "GO", "DF") ~ "Central-West",
                                   SG_UF_INTE %in% c("AM", "AP", "TO", "PA", "RO", "RR", "AC") ~ "North",
                                   SG_UF_INTE %in% c("BA", "AL", "SE", "PE", "MA", "RN", "PB", "CE", "PI") ~ "Northeast")
         ) %>% 
-        mutate(REGIAO = case_when(SG_UF %in% c("SP", "RJ", "ES", "MG") ~ "Southeast",
+        mutate(REGIAO_RES = case_when(SG_UF %in% c("SP", "RJ", "ES", "MG") ~ "Southeast",
                                   SG_UF %in% c("SC", "RS", "PR") ~ "South",
                                   SG_UF %in% c("MT", "MS", "GO", "DF") ~ "Central-West",
                                   SG_UF %in% c("AM", "AP", "TO", "PA", "RO", "RR", "AC") ~ "North",
@@ -334,8 +334,8 @@ run_app_data_preparation_sivep_covid <- function(df) {
                NOSOCOMIAL, FEBRE_m, TOSSE_m, GARGANTA_m, DISPNEIA_m, DESC_RESP_m, SATURACAO_m, DIARREIA_m, VOMITO_m, OUTRO_SIN_m,
                OUTRO_DES, DOR_ABD, FADIGA, PERD_OLFT, PERD_PALA, SRAG_original, SRAG_sfebre, PUERPERA_m, FATOR_RISC,
                CARDIOPATI_m, HEMATOLOGI_m, SIND_DOWN_m, HEPATICA_m,  ASMA_m, DIABETES_m, NEUROLOGIC_m, PNEUMOPATI_m, IMUNODEPRE_m, RENAL_m,
-               OBESIDADE_m, OUT_MORBI_m, MORB_DESC, CO_MUN_RES, SG_UF, REGIAO, 
-               HOSPITAL, date_int, CO_MU_INTE, REGIAO_INTE,
+               OBESIDADE_m, OUT_MORBI_m, MORB_DESC, CO_MUN_RES, SG_UF, REGIAO_RES, 
+               HOSPITAL, date_int, CO_MU_INTE, REGIAO,
                UTI, SUPORT_VEN, RES_AN, RES_IGG, RES_IGM, RES_IGA, AN_SARS2,
                PCR_RESUL, PCR_SARS2, DS_PCR_OUT, CRITERIO, PCR, CLASSI_FIN, EVOLUCAO, date_desf, date_enc,
                n_comorb_m, n_comorb_mreal, CONT_COMORB_m, CONT_COMORB_mreal, CO_UNI_NOT, CS_ZONA,
