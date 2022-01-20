@@ -17,7 +17,8 @@ download_sivep <- function(date, output_folder = here::here(),
     # }
 
     # SIVEP URLs for 2020 and 2021 files
-    sivep_path <- "https://s3-sa-east-1.amazonaws.com/ckan.saude.gov.br/SRAG/"
+    # sivep_path <- "https://s3-sa-east-1.amazonaws.com/ckan.saude.gov.br/SRAG/"
+    sivep_path <- "https://d26692udehoye.cloudfront.net/SRAG/"
 
     
     

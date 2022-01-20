@@ -92,7 +92,7 @@ run_app_data_preparation_sivep_covid <- function(df) {
         ) %>% 
         mutate(
             date_int = as.Date(case_when(
-                as.numeric(str_sub(DT_INTERNA, 7, 10)) > 2021 ~ paste0(str_sub(DT_INTERNA, 1, 6), str_sub(DT_NOTIFIC, 7, 10)),
+                as.numeric(str_sub(DT_INTERNA, 7, 10)) > 2022 ~ paste0(str_sub(DT_INTERNA, 1, 6), str_sub(DT_NOTIFIC, 7, 10)),
                 # DT_INTERNA == "31/10/7202" ~ "31/07/2020", # typo
                 # date_int > end_date & lubridate::year(date_int)  > lubridate::year(end_date)  ~ paste0(str_sub(DT_INTERNA,1, 6), "2020"),
                 TRUE ~ as.character(DT_INTERNA)), format = "%d/%m/%Y")
