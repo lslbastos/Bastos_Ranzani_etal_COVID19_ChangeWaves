@@ -35,7 +35,8 @@ download_sivep <- function(date, output_folder = here::here(),
             
             data.table::fread(df, na.strings = c("", "NA", NULL), ) %>% 
                 mutate(
-                    FATOR_RISC = as.character(FATOR_RISC)
+                    FATOR_RISC = as.character(FATOR_RISC),
+                    COD_IDADE = as.character(COD_IDADE)
                 )
             }
         ) 
