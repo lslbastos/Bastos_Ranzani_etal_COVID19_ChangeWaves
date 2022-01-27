@@ -75,9 +75,9 @@ run_sivep_app_update <- function(release_date) {
 check_last_update <- function(release_date) {
     library(tidyverse)
     
-    sivep_path <- "https://s3-sa-east-1.amazonaws.com/ckan.saude.gov.br/SRAG/"
+    sivep_path <- "https://d26692udehoye.cloudfront.net/SRAG/"
     
-    sivep_url <- paste0(sivep_path, "2021/INFLUD21-", stringr::str_sub(release_date, 9, 10),"-", 
+    sivep_url <- paste0(sivep_path, "2021/INFLUD22-", stringr::str_sub(release_date, 9, 10),"-", 
                         stringr::str_sub(release_date, 6, 7), "-", 
                         stringr::str_sub(release_date, 1, 4), ".csv")
     
