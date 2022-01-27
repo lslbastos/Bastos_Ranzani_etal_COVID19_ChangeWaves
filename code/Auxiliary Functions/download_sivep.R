@@ -20,17 +20,12 @@ download_sivep <- function(date, output_folder = here::here(),
     # sivep_path <- "https://s3-sa-east-1.amazonaws.com/ckan.saude.gov.br/SRAG/"
     sivep_path <- "https://d26692udehoye.cloudfront.net/SRAG/"
 
-    
-    
     ls_sivep_urls <- list(
         "SIVEP_2020" = paste0(sivep_path, "2020/INFLUD20-", stringr::str_sub(date, 9, 10),"-", stringr::str_sub(date, 6, 7), "-", stringr::str_sub(date, 1, 4), ".csv"),
         "SIVEP_2021" = paste0(sivep_path, "2021/INFLUD21-", stringr::str_sub(date, 9, 10),"-", stringr::str_sub(date, 6, 7), "-", stringr::str_sub(date, 1, 4), ".csv"),
         "SIVEP_2022" = paste0(sivep_path, "2022/INFLUD22-", stringr::str_sub(date, 9, 10),"-", stringr::str_sub(date, 6, 7), "-", stringr::str_sub(date, 1, 4), ".csv")
         )
-    
-    
 
-    
     output_file <- paste0(output_folder, "/sivep_raw_", date, ".csv.gz")
     
     # Downloads SIVEP 2020-2021    
@@ -42,11 +37,8 @@ download_sivep <- function(date, output_folder = here::here(),
                 mutate(
                     FATOR_RISC = as.character(FATOR_RISC)
                 )
-        }
-
+            }
         ) 
-
-    
     
     
     
