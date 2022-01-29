@@ -1,0 +1,12 @@
+input/Correspondence/google_mobility_raw_Brazil.csv.gz
+input/app_data/df_covid_data_week_age.csv.gz
+input/app_data/df_covid_data_week_age_death.csv.gz
+input/app_data/df_covid_data_week_all.csv.gz
+input/app_data/df_covid_ihm_week.csv.gz
+input/app_data/df_covid_ihm_week_age.csv.gz
+input/app_data/df_metadat_volume.csv.gz
+input/app_data/df_mob_report.csv.gz
+input/app_data/tb_descriptive_waves.csv.gz
+input/google_mobility_raw_Brazil.csv.gz
+input/srag_adults_covid_hosp_2022-01-26.csv.gz
+output/df_mob_report.csv.gz
