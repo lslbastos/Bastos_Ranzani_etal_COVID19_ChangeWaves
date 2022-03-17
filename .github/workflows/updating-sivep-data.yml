@@ -20,6 +20,8 @@ jobs:
         run: Rscript -e 'source(here::here("code", "App Data Preparation Functions", "app_update_sivep.R"))'
       - name: Commit results
         run:  |
+          git pull
+          git push
           git add .
           git commit -m "updating sivep data `date +'%Y-%m-%d %H:%M:%S'`" || echo "No changes to commit"
           git push origin || echo "No changes to commit"
