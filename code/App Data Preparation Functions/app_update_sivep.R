@@ -111,9 +111,9 @@ check_last_update <- function(release_date) {
 library(tidyverse)
 
 ## gets current date
-# current_date <- as.Date(Sys.time()) - 2 # data is from 2 days before the release date
+current_date <- as.Date(Sys.time()) - 2 # data is from 2 days before the release date
 # current_date <- as.Date("2022-01-26") # data is from 2 days before the release date
-current_date <- "2022-03-09"
+# current_date <- "2022-03-09"
 
 ## checks date
 release_date <- check_last_update(current_date)
