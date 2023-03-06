@@ -183,7 +183,7 @@ run_app_table_descriptive <- function(df) {
     srag_adults_covid <-
         df %>% 
         filter(
-            SEM_PRI_ADJ <= (max(SEM_PRI_ADJ) - delay)
+            SEM_PRI_ADJ <= (max(SEM_PRI_ADJ, na.rm = TRUE) - delay)
         ) %>% 
         mutate(
             FAIXA_IDADE_SIMP = case_when(
