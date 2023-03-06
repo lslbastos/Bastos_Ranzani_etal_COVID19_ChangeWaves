@@ -2,6 +2,7 @@
 run_app_data_preparation_sivep_covid <- function(df) {
     
     library(tidyverse)
+    options(dplyr.summarise.inform = FALSE)
 
     srag <- df
     
@@ -223,7 +224,7 @@ run_app_data_preparation_sivep_covid <- function(df) {
     
     # keeping the original with missing values, generating new with real missing sufix _m
     db_temp <- srag_adults_covid %>% 
-        select(index, columns)
+        select(index, all_of(columns))
     
     db_temp <- db_temp %>% 
         rename_at(all_of(columns), function(x) paste0(x, "_m"))
