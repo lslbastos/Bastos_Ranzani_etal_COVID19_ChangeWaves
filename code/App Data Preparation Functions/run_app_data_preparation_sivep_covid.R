@@ -416,7 +416,8 @@ run_app_data_preparation_sivep_covid <- function(df) {
     rm(srag_adults_covid) # Removes SIVEP with all columns
     
     srag_adults_covid_final_hosp <- srag_adults_covid_final %>% 
-        filter(HOSPITAL == "Yes")
+        filter(HOSPITAL == "Yes") %>% 
+        filter(date_sint <= as.Date(release_date))
     
 
     name_file_output_hosp <- paste0("srag_adults_covid_hosp_", release_date)
