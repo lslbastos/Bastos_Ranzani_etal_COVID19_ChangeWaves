@@ -51,7 +51,7 @@ download_sivep <- function(date, output_folder = here::here(),
     
     if (save_file) {
         # Exports SIVEP in a CSV file
-        arrow::write_parquet(sivep_raw, paste0(output_file), compression = "gzip")
+        # arrow::write_parquet(sivep_raw, paste0(output_file), compression = "gzip")
         # write_rds(sivep_raw, paste0(output_file), compress = "gz")
         # data.table::fwrite(sivep_raw, paste0(output_file))
         print(paste0("Finished! File created at: workdir/", output_folder))
