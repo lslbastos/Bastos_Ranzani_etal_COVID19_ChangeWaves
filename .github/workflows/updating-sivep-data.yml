@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@main
       - uses: r-lib/actions/setup-r@v1
         with:
-          r-version: '4.1.3' # The R version to download (if necessary) and use.
+          r-version: '4.3.1' # The R version to download (if necessary) and use.
       - run: Rscript -e 'print(paste0("Updating data at", as.Date(Sys.time())))'
       - name: Install packages
         run: Rscript -e 'install.packages(c("tidyverse", "zoo", "here", "data.table", "httr", "gtsummary", "broom", "vroom", "arrow"))'

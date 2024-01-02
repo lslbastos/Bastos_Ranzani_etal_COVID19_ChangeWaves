@@ -116,7 +116,8 @@ current_date <- as.Date(Sys.time()) - 2 # data is from 2 days before the release
 # current_date <- "2022-03-09"
 
 ## checks date
-release_date <- check_last_update(current_date)
+# release_date <- check_last_update(current_date)
+release_date <- "2023-10-16"
 
 ## run update on new date of last update date
 run_sivep_app_update(release_date)
