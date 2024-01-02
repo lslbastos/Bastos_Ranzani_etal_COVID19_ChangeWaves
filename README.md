@@ -21,7 +21,7 @@ Along with this correspondence, we developed a R shiny app to monitor COVID-19 h
 
 Access: [SIVEP COVID-19 Brazil](https://lslbastos.shinyapps.io/sivep_covid_brazil/)
 
-The app is updated regularly with the release of new data using Github Actions (Currently, every Wednsday, 19:00 GMT-3).
+The app is updated regularly with the release of new data using Github Actions (Currently, ~~every Wednsday, 19:00 GMT-3~~ updates have stopped due to changes in data source - code will adjusted soon [2024-01-01] ).
 Data used in the app can be found in this repository at  `input/app_data`.
 
 Any suggestions, please contact us at [GitHub](https://www.github.com/lslbastos) or [Twitter](https://www.twitter.com/lslbastos)
