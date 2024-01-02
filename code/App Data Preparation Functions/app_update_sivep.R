@@ -77,7 +77,7 @@ check_last_update <- function(release_date) {
     
     sivep_path <- "https://d26692udehoye.cloudfront.net/SRAG/"
     
-    sivep_url <- paste0(sivep_path, "2022/INFLUD22-", stringr::str_sub(release_date, 9, 10),"-", 
+    sivep_url <- paste0(sivep_path, "2023/INFLUD23-", stringr::str_sub(release_date, 9, 10),"-", 
                         stringr::str_sub(release_date, 6, 7), "-", 
                         stringr::str_sub(release_date, 1, 4), ".csv")
     
